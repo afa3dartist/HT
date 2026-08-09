@@ -785,7 +785,7 @@ function trainingPlan(s){const lus=ensureLineups(s);const tt=seasonTrainCode(s);
     slots.forEach(a=>{const sid=a[0],role=a[1];const d=lu.slots[sid];if(!d)return;const pct=slotPct(role,tt);
       if(d.toSign){if(pct>0)sign.push({label:d.label||role,pct});return;}
       const pl=state.players.find(p=>p.id===d.playerId);if(!pl)return;
-      if(pct===100)full.set(pl.id,shortName(pl.nom));else if(pct===50)half.set(pl.id,shortName(pl.nom));});});
+      if(pct===100)full.set(pl.id,pl.nom);else if(pct===50)half.set(pl.id,pl.nom);});});
   half.forEach((v,k)=>{if(full.has(k))half.delete(k);});
   return {full:[...full.values()],half:[...half.values()],sign};}
 function trainPlanHTML(s){const tp=trainingPlan(s);
