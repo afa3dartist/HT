@@ -328,7 +328,13 @@ async function save(){
   if(syncEnabled()){clearTimeout(_pushTimer);_pushTimer=setTimeout(pushSync,800);}
 }
 /* ---------- cloud sync (Supabase) ---------- */
-function syncCfg(){try{return JSON.parse(localStorage.getItem('ht_sync_cfg')||'{}');}catch(e){return {};}}
+const DEFAULT_SYNC={on:true,url:'https://ehgstsggxrbuccpwajbf.supabase.co',key:'sb_publishable_E2dIaA6P0vajxcJuVpmYZA_JOhEcv3y',code:'ht-u2fsfqdy'};
+function syncCfg(){
+  let c={};
+  try{const raw=localStorage.getItem('ht_sync_cfg');if(raw)c=JSON.parse(raw);}catch(e){}
+  if(!c.url&&!c.key&&!c.code)return {...DEFAULT_SYNC};
+  return c;
+}
 function syncEnabled(){const c=syncCfg();return !!(c.on&&c.url&&c.key&&c.code);}
 function genCode(){return 'ht-'+Math.random().toString(36).slice(2,10);}
 function sbHeaders(c){return {'apikey':c.key,'Authorization':'Bearer '+c.key,'Content-Type':'application/json'};}
