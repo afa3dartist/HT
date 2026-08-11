@@ -346,7 +346,7 @@
 </main>
 
 <nav class="tabs">
-  <button class="on" data-tab="linia" data-title="Ruta" onclick="go(this)"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2z"/><path d="M9 4v14M15 6v14"/></svg></span>Ruta</button>
+  <button class="on" data-tab="linia" data-title="Club" onclick="go(this)"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s7-3.5 7-9V5l-7-2.6L5 5v8c0 5.5 7 9 7 9z"/><path d="M9.5 6.5v9M14.5 6.5v9"/></svg></span>Club</button>
   <button data-tab="avisos" data-title="Avisos" onclick="go(this)"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg></span>Avisos</button>
   <button data-tab="squad" data-title="Plantilla" onclick="go(this)"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>Plantilla</button>
   <button data-tab="ref" data-title="Referència" onclick="go(this)"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></span>Referència</button>
@@ -902,6 +902,7 @@ function renderForms(){const lu=ensureLineups(curOwner())[pitMatch];
   document.getElementById('pit-forms').innerHTML=Object.keys(FORMS).map(f=>`<button class="${f===lu.formation?'on':''}" onclick="setFormation('${f}')">${f}</button>`).join('');}
 async function setFormation(f){ensureLineups(curOwner())[pitMatch].formation=f;await save();renderForms();renderPitch();}
 function renderPitch(){const s=curOwner();const lu=ensureLineups(s)[pitMatch];const tt=seasonTrainCode(s);const slots=BOARD;let html=PITCH_SVG;
+  let statSeason='';{if(s){if(pitKind==='phase'){const _ss=ordSeasons();const _i=itemSeaIdx(s,_ss);if(_ss[_i])statSeason=_ss[_i].id;}else statSeason=s.id;}}
   slots.forEach(a=>{const sid=a[0],role=a[1],x=a[2],y=a[3];const d=lu.slots[sid];const pct=slotPct(role,tt);const cc=slotColorClass(pct,s.compete);
     let cls='tok '+cc,inner=role,nm='',money=false,homep=false,pid='';
     if(d&&d.toSign){cls+=' sign';nm=(d.label||role)+' ⚑';}
@@ -910,7 +911,7 @@ function renderPitch(){const s=curOwner();const lu=ensureLineups(s)[pitMatch];co
     const badge=pct===100?'<span class="pb p100">100</span>':pct===50?'<span class="pb p50">50</span>':'';
     const coin=money?'<span class="coin sm coin-tok">$</span>':'';
     const heart=homep?'<span class="heart-tok">♥</span>':'';
-    const oc=pid?`openStats('${pid}','','now','${sid}','${role}')`:`openSlot('${sid}','${role}')`;
+    const oc=pid?`openStats('${pid}','${statSeason}','now','${sid}','${role}')`:`openSlot('${sid}','${role}')`;
     html+=`<div class="${cls}" style="left:${x}%;top:${y}%" onclick="${oc}"><div class="circ">${inner}${badge}${coin}${heart}</div>${nm?`<div class="nm">${esc(nm)}</div>`:''}</div>`;});
   document.getElementById('pitch-mini').innerHTML=html;renderPitSummary();}
 function renderPitSummary(){const s=curOwner();const tp=trainingPlan(s);
@@ -928,9 +929,9 @@ function trainingPlan(s){const lus=ensureLineups(s);const tt=seasonTrainCode(s);
       if(pct===100)full.set(pl.id,entry);else if(pct===50)half.set(pl.id,entry);});});
   half.forEach((v,k)=>{if(full.has(k))half.delete(k);});
   return {full:[...full.values()],half:[...half.values()],sign};}
-function trainPlanHTML(s,cutoff){const tp=trainingPlan(s);
+function trainPlanHTML(s,seasonId){const tp=trainingPlan(s);
   if(!tp.full.length&&!tp.half.length&&!tp.sign.length)return '';
-  const pchip=(base,e)=>`<span class="tpc ${base} tpc-click" onclick="openProjection('${e.id}','${cutoff||''}')">${e.home?'<span class="heart sm">♥</span>':''}${e.caixa?'<span class="coin sm">$</span>':''}${esc(e.name)} <span class="tpc-go">📈</span></span>`;
+  const pchip=(base,e)=>`<span class="tpc ${base} tpc-click" onclick="openProjection('${e.id}','${seasonId||''}')">${e.home?'<span class="heart sm">♥</span>':''}${e.caixa?'<span class="coin sm">$</span>':''}${esc(e.name)} <span class="tpc-go">📈</span></span>`;
   const col=(title,base,cls,arr)=>`<div class="tp-col ${cls}"><div class="tp-h">${title}</div><div class="tp-chips">${arr.length?arr.map(e=>pchip(base,e)).join(''):'<span class="tp-none">—</span>'}</div></div>`;
   const cols=(tp.full.length||tp.half.length)?`<div class="tp-cols">${col('100%','g','c100',tp.full)}${col('50%','b','c50',tp.half)}</div>`:'';
   const signHTML=tp.sign.length?`<div class="tp-h" style="margin-top:8px">A fitxar</div><div class="tp-chips">${tp.sign.map(x=>`<span class="tpc k">${esc(x.label)} ⚑</span>`).join('')}</div>`:'';
@@ -1026,10 +1027,10 @@ function itemSeaIdx(x,seasons){const d=x.date?new Date(x.date+'T12:00:00'):null;
 function goSeason(i){liniaIdx=i;renderLinia();}
 function prevSeason(){if(liniaIdx>0)goSeason(liniaIdx-1);}
 function nextSeason(){if(liniaIdx<ordSeasons().length-1)goSeason(liniaIdx+1);}
-function phaseCardHTML(x,cutoff){
+function phaseCardHTML(x,seasonId){
   const col={def:'#86c34a',pm:'#46b4cf',wing:'#ab7ecb',pass:'#46b4cf',sco:'#e0555c',gk:'#e4ab3d',setp:'#86c34a'}[x.trainType]||'#86c34a';
   const end=x.date?_fmt(_add(_sat(x.date),(+x.setmanes||0)*7)):'';
-  return `<div class="lp-phase" style="border-left-color:${col}"><div class="lp-ph-h"><span class="n"><span class="cone"><i></i></span> ${TRAIN_LABEL[x.trainType]||'Entrenament'}</span><span class="d">${x.setmanes||'?'} setm${x.date?' · fins '+end:''}</span></div>${trainPlanHTML(x,cutoff)}<div class="tl-actions"><button class="mini gc" onclick="openPhasePitch('${x.id}')">⚽ Alineació</button><button class="mini" onclick="editTimeline('${x.id}')">✎</button><button class="mini del" onclick="delTimeline('${x.id}')">✕</button> ${bellHTML(x)}</div></div>`;
+  return `<div class="lp-phase" style="border-left-color:${col}"><div class="lp-ph-h"><span class="n"><span class="cone"><i></i></span> ${TRAIN_LABEL[x.trainType]||'Entrenament'}</span><span class="d">${x.setmanes||'?'} setm${x.date?' · fins '+end:''}</span></div>${trainPlanHTML(x,seasonId)}<div class="tl-actions"><button class="mini gc" onclick="openPhasePitch('${x.id}')">⚽ Alineació</button><button class="mini" onclick="editTimeline('${x.id}')">✎</button><button class="mini del" onclick="delTimeline('${x.id}')">✕</button> ${bellHTML(x)}</div></div>`;
 }
 function tradeCardHTML(x){
   if(x.kind==='sale')return `<div class="lp-trade sell"><div class="lp-ph-h"><span class="n">💰 ${x.playerId?playerLabel(x.playerId):esc(x.title||'Venda')}</span><span class="d">${tlDate(x.date)}</span></div><div class="tl-range" style="margin-top:6px">${fmtEur(x.priceMin)} – ${fmtEur(x.priceMax)}</div><div class="tl-actions"><button class="mini" onclick="editTimeline('${x.id}')">✎</button><button class="mini del" onclick="delTimeline('${x.id}')">✕</button> ${bellHTML(x)}</div></div>`;
@@ -1060,7 +1061,7 @@ function renderLinia(){
     <div class="lp-dots">${dots}</div>
     <div class="lp-card">
       ${s.competicio?`<div class="lp-obj">🏆 ${esc(s.competicio)}</div>`:''}
-      <div class="lp-lab">Entrenament</div>${trains.length?trains.map(function(x){return phaseCardHTML(x,R?_iso(R.end):'');}).join(''):'<div class="lp-empty">Cap fase d\'entrenament.</div>'}
+      <div class="lp-lab">Entrenament</div>${trains.length?trains.map(function(x){return phaseCardHTML(x,s.id);}).join(''):'<div class="lp-empty">Cap fase d\'entrenament.</div>'}
       <div class="lp-lab">Traspassos</div>${trades.length?trades.map(tradeCardHTML).join(''):'<div class="lp-empty">Cap venda ni fitxatge.</div>'}
       <div class="lp-lab">Notes</div>${notes.length?notes.map(noteCardHTML).join(''):'<div class="lp-empty">Cap nota.</div>'}
       <div class="lp-actions"><button class="mini seaedit" onclick="editSeason('${s.id}')">✎ Edita temporada</button><button class="mini del" onclick="delSeasonTL('${s.id}')">Elimina</button></div>
@@ -1176,10 +1177,11 @@ function coachMult(){const c=state.coach||{};const tr=+c.trainer||5,a1=+c.a1||0,
 function editCoach(){const c=state.coach||{trainer:5,a1:5,a2:5};openSheet('Personal · entrenador i assistents',[{k:'trainer',lab:'Entrenador (conos 1-5)',type:'number'},{k:'a1',lab:'Assistent 1 (conos 0-5)',type:'number'},{k:'a2',lab:'Assistent 2 (conos 0-5)',type:'number'}],{trainer:c.trainer,a1:c.a1,a2:c.a2},async(o)=>{state.coach={trainer:+o.trainer||5,a1:+o.a1||0,a2:+o.a2||0};await save();});}
 function parseAge(e){const m=(''+ (e||'')).match(/\d+/);return m?+m[0]:20;}
 function playerRateInPhase(pl,ph){let rate=0;if(!ph.lineups)return 0;['lliga','copa'].forEach(m=>{const lu=ph.lineups[m];if(!lu||!lu.slots)return;Object.entries(lu.slots).forEach(([sid,d])=>{if(d&&d.playerId===pl.id){const a=BOARD.find(x=>x[0]===sid);const pct=a?slotPct(a[1],ph.trainType):0;if(pct>rate)rate=pct;}});});return rate;}
-function projectPlayer(pl,throughISO){
+function projectPlayer(pl,fromISO,toISO){
   const sk={};SKILL_ORDER.forEach(k=>{sk[k]={lvl:+(pl[k]||0),prog:0};});
-  const startAge=parseAge(pl.edat);
-  const phases=(state.timeline||[]).filter(x=>x.kind==='train'&&x.trainType&&x.setmanes&&(!throughISO||!x.date||x.date<=throughISO)).sort((a,b)=>(a.date||'').localeCompare(b.date||''));
+  const preW=fromISO?Math.max(0,(new Date(fromISO+'T12:00:00')-new Date())/6048e5):0;
+  const startAge=parseAge(pl.edat)+preW/16;
+  const phases=(state.timeline||[]).filter(x=>x.kind==='train'&&x.trainType&&x.setmanes&&(!fromISO||!x.date||x.date>=fromISO)&&(!toISO||!x.date||x.date<toISO)).sort((a,b)=>(a.date||'').localeCompare(b.date||''));
   let weeks=0;
   phases.forEach(ph=>{
     const wks=+ph.setmanes||0;const key=TRAIN_SKILL[ph.trainType];const rate=playerRateInPhase(pl,ph);
@@ -1196,38 +1198,41 @@ function projectPlayer(pl,throughISO){
   });
   return {sk,startAge,endAge:startAge+weeks/16,weeks};
 }
-function openStats(id,throughISO,mode,sid,role){
+function openStats(id,seasonId,mode,sid,role){
   mode=mode||'now';
   const pl=state.players.find(p=>p.id===id);if(!pl)return;
-  const P=projectPlayer(pl,throughISO);
+  const s=seasonId?state.seasons.find(x=>x.id===seasonId):null;
+  const R=s?seaRange(s):null;
+  const fromISO=R?_iso(R.start):'', toISO=R?_iso(R.end):'';
+  const P=projectPlayer(pl,fromISO,toISO);
   const rows=SKILL_ORDER.map(k=>{
-    const cur=+(pl[k]||0);const s=P.sk[k];
-    const showLvl=(mode==='plan')?s.lvl:cur;
+    const cur=+(pl[k]||0);const sk=P.sk[k];
+    const showLvl=(mode==='plan')?sk.lvl:cur;
     const fillW=Math.min(100,cur/20*100);
-    const gainW=(mode==='plan')?Math.max(0,Math.min(100,(s.lvl+s.prog)/20*100)-fillW):0;
-    const gain=(mode==='plan')?(s.lvl-cur):0;
-    const plus=(mode==='plan')?(gain>0?('+'+gain):((s.prog>0.03&&s.lvl<20)?('+'+Math.round(s.prog*100)+'%'):'')):'';
+    const gainW=(mode==='plan')?Math.max(0,Math.min(100,(sk.lvl+sk.prog)/20*100)-fillW):0;
+    const gain=(mode==='plan')?(sk.lvl-cur):0;
+    const plus=(mode==='plan')?(gain>0?('+'+gain):((sk.prog>0.03&&sk.lvl<20)?('+'+Math.round(sk.prog*100)+'%'):'')):'';
     return `<div class="pj-row"><span class="pj-lab">${SKILL_LAB[k]}</span>
       <div class="pj-bar"><div class="pj-fill" style="width:${fillW}%"></div><div class="pj-gain" style="left:${fillW}%;width:${gainW}%"></div></div>
       <span class="pj-lname">${showLvl>0?(LVLNAME[showLvl]||''):'—'}</span><span class="pj-num">${showLvl||'–'}</span><span class="pj-plus">${plus}</span></div>`;
   }).join('');
-  const trained=(state.timeline||[]).some(x=>x.kind==='train'&&playerRateInPhase(pl,x)>0);
-  const ti=(throughISO||'').replace(/'/g,'');
+  const trained=R?(state.timeline||[]).some(x=>x.kind==='train'&&x.date&&x.date>=fromISO&&x.date<toISO&&playerRateInPhase(pl,x)>0):(state.timeline||[]).some(x=>x.kind==='train'&&playerRateInPhase(pl,x)>0);
+  const sc=seasonId||'';
   const ex=sid?(",'"+sid+"','"+role+"'"):'';
   document.getElementById('sheet-title').textContent='Estadístiques';
   document.getElementById('sheet-body').innerHTML=`
     <div class="pj-hd">${pl.home?'<span class="heart">♥</span> ':''}${esc(pl.nom)}<span class="pj-age">${esc(pl.edat||'')}${pl.esp?' · '+esc(pl.esp):''}</span></div>
-    <div class="pj-toggle"><button class="${mode==='now'?'on':''}" onclick="openStats('${id}','${ti}','now'${ex})">Ara</button><button class="${mode==='plan'?'on':''}" onclick="openStats('${id}','${ti}','plan'${ex})">Amb el pla</button></div>
-    ${mode==='plan'?'<div class="pj-tag">▲ projecció seguint el pla · en groc el que puja</div>':''}
+    <div class="pj-toggle"><button class="${mode==='now'?'on':''}" onclick="openStats('${id}','${sc}','now'${ex})">Ara</button><button class="${mode==='plan'?'on':''}" onclick="openStats('${id}','${sc}','plan'${ex})">Amb el pla</button></div>
+    ${mode==='plan'?`<div class="pj-tag">▲ projecció ${s?('T'+s.temporada):'del pla'} · en groc el que puja</div>`:''}
     ${rows}
-    ${(mode==='plan'&&!trained)?'<div class="pj-warn">No està col·locat a cap fase; posa\'l a una alineació per veure la projecció.</div>':''}
+    ${(mode==='plan'&&!trained)?'<div class="pj-warn">No entrena en aquesta temporada; posa\'l a l\'alineació d\'una fase per veure la projecció.</div>':''}
     ${sid?`<div class="tl-actions" style="margin-top:12px"><button class="mini gc" onclick="openSlot('${sid}','${role}')">✎ Canviar en aquesta posició</button></div>`:''}
-    <div class="pj-disc">${mode==='plan'?`Projecció (nivell + edat · entrenador ${(state.coach||{}).trainer||5} conos · assist. ${(state.coach||{}).a1||0}+${(state.coach||{}).a2||0}). Calibrada amb dades reals.`:'Estadístiques actuals. Toca "Amb el pla" per veure fins on arriben amb l\'entrenament.'}</div>`;
+    <div class="pj-disc">${mode==='plan'?`Projecció d'aquesta temporada (nivell + edat · entrenador ${(state.coach||{}).trainer||5} conos). Calibrada amb dades reals.`:'Estadístiques actuals. Toca "Amb el pla" per veure què puja aquesta temporada.'}</div>`;
   sheetSave=null;
   var sv=document.querySelector('.sheet-actions .save');if(sv)sv.style.display='none';
   document.getElementById('ov').classList.add('on');
 }
-function openProjection(id,throughISO){openStats(id,throughISO,'plan');}
+function openProjection(id,seasonId){openStats(id,seasonId,'plan');}
 /* ---------- training curves (Referència) ---------- */
 function renderCurves(){
   const el=document.getElementById('curves');if(!el)return;
