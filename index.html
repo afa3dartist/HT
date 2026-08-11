@@ -90,7 +90,7 @@
   .pl-list{display:grid;gap:9px}
   .pl{display:flex;align-items:center;gap:10px;background:var(--panel);
     border:1px solid var(--brd);border-radius:11px;padding:10px 12px}
-  .pl .nm{font-family:"Oswald";font-weight:600;font-size:14.5px;flex:1;min-width:0}
+  .pl .nm{font-family:"Oswald";font-weight:600;font-size:14.5px;flex:1;min-width:0;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
   .pl .meta{font-size:11.5px;color:var(--dim);margin-top:1px;font-family:"Inter"}
   .pl .skills{font-size:11px;color:#bcd6c8;margin-top:3px;font-family:"Oswald";letter-spacing:.03em}
   .pl .tsi{font-family:"Oswald";font-weight:600;font-size:13px;color:var(--dim);white-space:nowrap}
@@ -146,10 +146,31 @@
   .compete-btn.on{color:#aec3ce;border-color:rgba(125,148,160,.5)}
   .pit-legend{font-size:11px;color:var(--dim);text-align:center;margin-top:9px}
   .tp-chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:3px}
-  .tpc{font-size:11px;font-weight:600;font-family:"Oswald";letter-spacing:.02em;padding:3px 8px;border-radius:20px;border:1px solid}
+  .tp-cols{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:4px}
+  .tp-col{min-width:0}
+  .tp-h{font-family:"Oswald";text-transform:uppercase;letter-spacing:.08em;font-size:10px;color:var(--dim);margin-bottom:4px}
+  .tp-col.c100 .tp-h{color:var(--acc)} .tp-col.c50 .tp-h{color:var(--cyan)}
+  .tp-none{color:var(--dim);font-size:12px}
+  .tpc{font-size:11px;font-weight:600;font-family:"Oswald";letter-spacing:.02em;padding:3px 8px;border-radius:20px;border:1px solid;display:inline-flex;align-items:center;gap:5px}
   .tpc.g{background:color-mix(in srgb,var(--acc) 18%,transparent);border-color:color-mix(in srgb,var(--acc) 55%,transparent);color:#cfeba8}
   .tpc.b{background:color-mix(in srgb,var(--cyan) 18%,transparent);border-color:color-mix(in srgb,var(--cyan) 55%,transparent);color:#bfe9f3}
   .tpc.k{background:#0b0e0c;border-color:#555;color:#ddd}
+  .tpc-click{cursor:pointer}
+  .tpc-go{opacity:.6;font-size:10px}
+  .cone{display:inline-block;width:12px;height:14px;position:relative;vertical-align:-2px;margin-right:2px}
+  .cone::before{content:"";position:absolute;left:1px;bottom:2px;width:10px;height:2px;border-radius:1px;background:#e08a2b}
+  .cone::after{content:"";position:absolute;left:50%;bottom:3px;transform:translateX(-50%);width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent;border-bottom:11px solid #f08a1d;
+    box-shadow:inset 0 0 0 40px transparent}
+  .cone i{position:absolute;left:50%;transform:translateX(-50%);bottom:6px;width:6px;height:2px;background:#fff;z-index:2}
+  .coin{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:50%;background:linear-gradient(145deg,#f6cf5c,#d99a2b);color:#3d2600;font-weight:800;font-size:11px;font-family:"Oswald";flex:none;box-shadow:0 1px 2px rgba(0,0,0,.4)}
+  .coin.sm{width:15px;height:15px;font-size:9px}
+  .heart{color:#ff5c6c;font-size:13px;line-height:1}
+  .heart.sm{font-size:11px}
+  .tok .heart-tok{position:absolute;bottom:-6px;left:-8px;font-size:11px;color:#ff5c6c;text-shadow:0 1px 2px rgba(0,0,0,.6)}
+  .pl.money{border-color:rgba(228,171,61,.5);background:rgba(228,171,61,.08)}
+  .pl .nm.money{color:#f2cf7a}
+  .tpc.money{display:inline-flex;align-items:center;gap:5px;background:color-mix(in srgb,var(--amber) 20%,transparent);border-color:color-mix(in srgb,var(--amber) 60%,transparent);color:#f4d79a}
+  .tok .coin-tok{position:absolute;top:-7px;left:-9px}
   .pit-summary{margin-top:16px;display:grid;gap:8px}
   .sm-row{font-size:12.5px;line-height:1.5}
   .sm-row b{font-family:"Oswald";text-transform:uppercase;letter-spacing:.05em;font-size:11px}
@@ -188,12 +209,91 @@
   .note{font-size:11.5px;color:var(--dim);text-align:center;margin-top:10px;line-height:1.4}
   .warn{background:rgba(228,171,61,.12);border:1px solid rgba(228,171,61,.4);
     color:#f2d79a;font-size:12px;border-radius:9px;padding:9px 11px;margin-bottom:12px}
+
+  /* ===== timeline (Línia) ===== */
+  .tl-avisos{margin-bottom:16px}
+  .tl-avh{font-family:"Oswald";text-transform:uppercase;letter-spacing:.1em;font-size:11px;color:var(--dim);margin:0 0 8px}
+  .av{display:flex;align-items:center;gap:11px;padding:10px 12px;border:1px solid var(--brd);border-radius:10px;margin-bottom:8px;background:rgba(13,42,32,.7)}
+  .avd{text-align:center;flex:none;background:rgba(228,171,61,.14);border:1px solid rgba(228,171,61,.4);border-radius:9px;padding:5px 8px;min-width:50px}
+  .avd .n{font-family:"Oswald";font-weight:700;font-size:16px;color:#f2cf7a;line-height:1}
+  .avd .m{font-family:"Oswald";font-size:9px;color:var(--dim);text-transform:uppercase}
+  .avt{flex:1;min-width:0}.avt .n{font-family:"Oswald";font-weight:600;font-size:13px}.avt .s{font-size:11px;color:var(--dim)}
+  .avbtns{display:flex;gap:5px;flex-wrap:wrap}
+  .tl-rail{position:relative;padding-left:16px;border-left:2px solid var(--brd)}
+  .tl-season{display:flex;align-items:center;gap:8px;margin:6px 0 12px -18px;padding-left:18px}
+  .tl-season .l{flex:1;border-top:2px dashed var(--am)}
+  .tl-season .t{font-family:"Oswald";font-weight:700;font-size:12px;color:var(--am);letter-spacing:.03em;white-space:nowrap}
+  .tl-item{position:relative;border:1px solid var(--brd);border-left:4px solid var(--acc);border-radius:10px;background:var(--panel);padding:11px 12px;margin-bottom:10px}
+  .tl-item::before{content:"";position:absolute;left:-22px;top:16px;width:9px;height:9px;border-radius:50%;background:var(--acc);border:2px solid var(--bg)}
+  .tl-h{display:flex;justify-content:space-between;align-items:center;gap:8px}
+  .tl-h .n{font-family:"Oswald";font-weight:600;font-size:14.5px;display:flex;align-items:center;gap:8px;min-width:0}
+  .tl-h .d{font-size:10.5px;color:var(--dim);white-space:nowrap}
+  .tl-poschip{font-family:"Oswald";font-weight:700;font-size:12px;padding:2px 9px;border-radius:7px;background:color-mix(in srgb,var(--acc) 16%,transparent);border:1px solid color-mix(in srgb,var(--acc) 50%,transparent);color:#cfeba8}
+  .tl-body{margin-top:9px}
+  .tl-lab{font-family:"Oswald";text-transform:uppercase;letter-spacing:.06em;font-size:9.5px;color:var(--dim);margin:8px 0 5px}
+  .tl-reqs{display:flex;flex-wrap:wrap;gap:5px}
+  .tl-req{font-family:"Oswald";font-weight:600;font-size:11.5px;padding:3px 9px;border-radius:7px;background:rgba(70,180,207,.14);border:1px solid rgba(70,180,207,.45);color:#bfe9f3}
+  .tl-train{display:inline-block;font-family:"Oswald";font-weight:600;font-size:11.5px;padding:3px 9px;border-radius:7px;background:rgba(134,195,74,.14);border:1px solid rgba(134,195,74,.45);color:#cfeba8}
+  .tl-range{font-family:"Oswald";font-weight:600;font-size:13px;color:#f2cf7a}
+  .tl-budget{display:flex;justify-content:space-between;align-items:center;background:rgba(228,171,61,.1);border:1px solid rgba(228,171,61,.4);border-radius:9px;padding:8px 11px;margin-top:9px}
+  .tl-budget .l{font-family:"Oswald";text-transform:uppercase;letter-spacing:.05em;font-size:9.5px;color:var(--dim)}
+  .tl-budget .v{font-family:"Oswald";font-weight:700;font-size:16px;color:#f2cf7a}
+  .bellchip{background:#e4ab3d;color:#2a1c00;font-size:9px;font-weight:700;font-family:"Oswald";border-radius:20px;padding:2px 8px}
+  .tl-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+  .tl-add{width:100%;border:1.5px dashed var(--brd);background:transparent;color:var(--dim);border-radius:10px;padding:12px;font-family:"Oswald";font-size:12px;letter-spacing:.04em;text-transform:uppercase;cursor:pointer;margin-top:4px}
+  .tl-type{width:100%;display:flex;align-items:center;gap:10px;background:var(--panel2);border:1px solid var(--brd);color:var(--ink);border-radius:10px;padding:13px;font-family:"Oswald";font-weight:600;font-size:14px;margin-bottom:8px;cursor:pointer;text-align:left}
+  .tl-sea{position:relative;border:1px solid rgba(228,171,61,.35);border-left:4px solid var(--am);border-radius:10px;background:rgba(228,171,61,.07);padding:10px 12px;margin-bottom:10px}
+  .tl-sea::before{content:"";position:absolute;left:-22px;top:15px;width:9px;height:9px;border-radius:50%;background:var(--am);border:2px solid var(--bg)}
+  .tl-seah{display:flex;justify-content:space-between;align-items:center;gap:8px}
+  .tl-seah .t{font-family:"Oswald";font-weight:700;font-size:14px;color:#f4d79a}
+  .tl-seah .sd{font-size:10.5px;color:var(--dim)}
+  .tl-seac{font-size:12px;color:#dfeee6;margin-top:4px}
+  .tl-now{position:relative;display:flex;align-items:center;gap:8px;margin:12px 0 14px}
+  .tl-now .ball{position:absolute;left:-27px;font-size:20px;filter:drop-shadow(0 0 6px rgba(134,195,74,.85));z-index:3}
+  .tl-now .t{font-family:"Oswald";font-weight:700;font-size:12px;color:var(--acc);letter-spacing:.05em;white-space:nowrap}
+  .tl-now .l{flex:1;border-top:2px solid var(--acc);opacity:.55}
+  .tl-seaAuto{display:flex;align-items:center;justify-content:space-between;gap:8px;border:1px dashed rgba(228,171,61,.4);border-radius:9px;padding:8px 11px;margin-bottom:10px;background:transparent}
+  .tl-seaAuto .t{font-family:"Oswald";font-weight:600;font-size:12.5px;color:#d9c08a}
+  .lp-pager{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
+  .lp-arrow{width:40px;height:40px;border-radius:50%;border:1px solid var(--brd);background:var(--panel2);color:var(--ink);font-size:20px;line-height:1;cursor:pointer;flex:none}
+  .lp-arrow:disabled{opacity:.3}
+  .lp-pt{text-align:center;min-width:0}.lp-pt .t1{font-family:"Oswald";font-weight:700;font-size:17px}.lp-pt .t2{font-size:11px;color:var(--dim);margin-top:1px}
+  .lp-dots{display:flex;gap:5px;justify-content:center;margin-bottom:14px}
+  .lp-dots i{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.2);cursor:pointer}
+  .lp-dots i.on{background:var(--am);width:16px;border-radius:4px}
+  .lp-card{border:1px solid var(--brd);border-radius:14px;background:rgba(13,42,32,.6);padding:14px}
+  .lp-obj{font-size:12.5px;color:#dfeee6;background:rgba(228,171,61,.1);border:1px solid rgba(228,171,61,.35);border-radius:9px;padding:9px 11px;margin-bottom:6px}
+  .lp-lab{font-family:"Oswald";text-transform:uppercase;letter-spacing:.08em;font-size:10px;color:var(--dim);margin:15px 0 8px}
+  .lp-empty{font-size:12px;color:var(--dim);padding:4px 2px}
+  .lp-phase{border:1px solid var(--brd);border-left:3px solid var(--acc);border-radius:9px;background:var(--panel);padding:11px 12px;margin-bottom:8px}
+  .lp-ph-h{display:flex;justify-content:space-between;align-items:center;gap:8px}
+  .lp-ph-h .n{font-family:"Oswald";font-weight:600;font-size:14px;display:flex;align-items:center;gap:7px;min-width:0}
+  .lp-ph-h .d{font-size:10.5px;color:var(--dim);white-space:nowrap}
+  .lp-trade{border:1px solid var(--brd);border-radius:9px;background:var(--panel);padding:11px 12px;margin-bottom:8px;border-left:3px solid}
+  .lp-trade.sell{border-left-color:#f6cf5c}.lp-trade.buy{border-left-color:var(--acc)}
+  .lp-note{border:1px solid var(--brd);border-radius:9px;background:var(--panel);padding:11px 12px;margin-bottom:8px;border-left:3px solid #7d94a0}
+  .lp-mini{font-size:11.5px;color:var(--dim);margin-top:5px}.lp-mini b{color:#eaf4ee}
+  .lp-actions{display:flex;gap:8px;margin-top:14px;padding-top:12px;border-top:1px solid var(--brd)}
+  .mini.seaedit{border-color:rgba(228,171,61,.4);color:#f4d79a}
+  .pj-hd{display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-family:"Oswald";font-weight:700;font-size:16px;margin-bottom:3px}
+  .pj-hd .pj-age{font-family:"Oswald";font-weight:500;font-size:11px;color:var(--dim)}
+  .pj-tag{font-size:11px;color:#e4ab3d;font-family:"Oswald";margin-bottom:12px}
+  .pj-row{display:grid;grid-template-columns:66px 1fr 78px 24px 34px;align-items:center;gap:8px;padding:5px 0}
+  .pj-lab{font-size:11.5px;color:var(--dim);text-align:right}
+  .pj-bar{position:relative;height:14px;border-radius:4px;background:rgba(255,255,255,.09);overflow:hidden}
+  .pj-fill{position:absolute;left:0;top:0;bottom:0;background:#5a9a34}
+  .pj-gain{position:absolute;top:0;bottom:0;background:#e4ab3d}
+  .pj-lname{font-size:11px;color:#dfeee6}
+  .pj-num{font-family:"Oswald";font-weight:700;font-size:14px;text-align:right}
+  .pj-plus{font-family:"Oswald";font-weight:700;font-size:12px;color:#e4ab3d}
+  .pj-warn{margin-top:12px;background:rgba(228,171,61,.1);border:1px solid rgba(228,171,61,.4);border-radius:9px;padding:9px 11px;font-size:11.5px;color:#f4d79a}
+  .pj-disc{font-size:10.5px;color:var(--dim);margin-top:12px;line-height:1.4}
 </style>
 </head>
 <body>
 <header class="top">
   <div class="top-row">
-    <div><div class="brand">Hattrick · Projecte llarg termini</div><h1 id="page-title">Temporades</h1></div>
+    <div><div class="brand">Hattrick · Projecte llarg termini</div></div>
     <button class="sync-btn" id="sync-btn" onclick="openSync()" title="Sincronització">☁</button>
   </div>
   <div class="sync-status" id="sync-status"></div>
@@ -202,18 +302,18 @@
 <main>
   <div id="warn-store" class="warn" style="display:none">Aquest navegador no permet desar dades localment, així que els canvis no es guardaran en aquesta sessió.</div>
 
-  <section class="tab on" id="t-seasons">
-    <div class="sec-head"><h2>Roadmap</h2><button class="add" onclick="editSeason()">+ Temporada</button></div>
-    <div id="seasons"></div>
+  <section class="tab on" id="t-linia">
+    <div class="sec-head" style="justify-content:flex-end"><button class="add" onclick="addTimelineItem()">+ Element</button></div>
+    <div id="linia"></div>
   </section>
 
-  <section class="tab" id="t-miles">
-    <div class="sec-head"><h2>Fites &amp; calendari</h2><button class="add" onclick="editMile()">+ Fita</button></div>
-    <div id="miles"></div>
+  <section class="tab" id="t-avisos">
+    <div class="sec-head"><h2>Avisos</h2></div>
+    <div id="avisos-list"></div>
   </section>
 
   <section class="tab" id="t-squad">
-    <div class="sec-head"><h2>Plantilla</h2><button class="add" onclick="editPlayer()">+ Jugador</button></div>
+    <div class="sec-head"><h2>Plantilla</h2><div style="display:flex;gap:8px"><button class="add" style="background:var(--panel2);color:var(--ink)" onclick="editCoach()"><span class="cone"><i></i></span> Personal</button><button class="add" onclick="editPlayer()">+ Jugador</button></div></div>
     <div id="squad"></div>
   </section>
 
@@ -224,8 +324,8 @@
 </main>
 
 <nav class="tabs">
-  <button class="on" data-tab="seasons" data-title="Temporades" onclick="go(this)"><span class="ic">🗓️</span>Temporades</button>
-  <button data-tab="miles" data-title="Fites" onclick="go(this)"><span class="ic">📌</span>Fites</button>
+  <button class="on" data-tab="linia" data-title="Línia" onclick="go(this)"><span class="ic">📈</span>Línia</button>
+  <button data-tab="avisos" data-title="Avisos" onclick="go(this)"><span class="ic">🔔</span>Avisos</button>
   <button data-tab="squad" data-title="Plantilla" onclick="go(this)"><span class="ic">👥</span>Plantilla</button>
   <button data-tab="ref" data-title="Referència" onclick="go(this)"><span class="ic">📖</span>Referència</button>
 </nav>
@@ -282,12 +382,12 @@ function seed(){return{
    desc:"Els dos porters que entrenaven defensa. Trieu el millor dia per llistar-los."}
  ],
  players:[
-  {id:uid(),nom:"Sebas Elitxigerra",edat:"20a",tsi:84770,esp:"Joc aeri",rol:"build",nota:"Extrem 13 · potencial selecció"},
-  {id:uid(),nom:"Bonaventura Askargorta",edat:"22a",tsi:82360,esp:"Potent",rol:"build",nota:"Extrem 13 · Creativitat 12"},
-  {id:uid(),nom:"Otsobi Venegas",edat:"20a",tsi:72900,esp:"Imprevisible",rol:"build",nota:"Extrem 12 · potencial selecció"},
-  {id:uid(),nom:"Przemysław Wawrzyniak",edat:"20a",tsi:64070,esp:"Potent",rol:"build",nota:"Extrem 13 · Passades 8"},
-  {id:uid(),nom:"Amaiur Arespalditza",edat:"20a",tsi:58320,esp:"—",rol:"build",nota:"Extrem 12 · Creativitat 12"},
-  {id:uid(),nom:"Ramón Donez",edat:"22a",tsi:45620,esp:"—",rol:"build",nota:"Acadèmia · Extrem 12"},
+  {id:uid(),nom:"Sebas Elitxigerra",edat:"20a",tsi:84770,esp:"Joc aeri",rol:"build",home:true,nota:"Extrem 13 · potencial selecció"},
+  {id:uid(),nom:"Bonaventura Askargorta",edat:"22a",tsi:82360,esp:"Potent",rol:"build",home:true,nota:"Extrem 13 · Creativitat 12"},
+  {id:uid(),nom:"Otsobi Venegas",edat:"20a",tsi:72900,esp:"Imprevisible",rol:"build",home:true,nota:"Extrem 12 · potencial selecció"},
+  {id:uid(),nom:"Przemysław Wawrzyniak",edat:"20a",tsi:64070,esp:"Potent",rol:"build",home:true,nota:"Extrem 13 · Passades 8"},
+  {id:uid(),nom:"Amaiur Arespalditza",edat:"20a",tsi:58320,esp:"—",rol:"build",home:true,nota:"Extrem 12 · Creativitat 12"},
+  {id:uid(),nom:"Ramón Donez",edat:"22a",tsi:45620,esp:"—",rol:"build",home:true,nota:"Acadèmia · Extrem 12"},
   {id:uid(),nom:"Kasimir van der Breggen",edat:"22a",tsi:46370,esp:"—",rol:"perif",nota:"Entrena defensa · Extrem 12"},
   {id:uid(),nom:"Alix Suret",edat:"22a",tsi:39770,esp:"Joc aeri",rol:"perif",nota:"Entrena defensa · Def 10"},
   {id:uid(),nom:"Hal Foster",edat:"32a",tsi:33960,esp:"Potent",rol:"perif",nota:"Davanter · Anotació 15 · sou alt (19.310)"},
@@ -295,6 +395,12 @@ function seed(){return{
   {id:uid(),nom:"Lesław Falaciński",edat:"20a",tsi:11570,esp:"Potent",rol:"caixa",nota:"Porter · venda cap al 24 nov"},
   {id:uid(),nom:"Yotam Zvi",edat:"30a",tsi:11110,esp:"Ràpid",rol:"perif",nota:"Anotació 10 · PA 21"},
   {id:uid(),nom:"Matías G. Romero",edat:"34a",tsi:5490,esp:"—",rol:"perif",nota:"Límit del bloc que entrenes"}
+ ],
+ timeline:[
+  {id:uid(),kind:'train',trainType:'def',setmanes:8,date:'2026-07-25',alert:0},
+  {id:uid(),kind:'buy',pos:'Lateral',reqsText:'Defensa 8–10\nExtrem 5+\nPotent\nEdat < 21',entrenarem:'Extrem (lateral)',motiu:'Reforç per pujar a 5a (V)',budgetMax:2000000,date:'2026-11-01',alert:7},
+  {id:uid(),kind:'sale',playerId:'',title:'Vendre porters (Volkmar + Lesław)',priceMin:800000,priceMax:1200000,date:'2026-11-14',alert:3},
+  {id:uid(),kind:'note',text:'Revisar sous abans de pujar a 5a',date:'2026-12-01',alert:0}
  ],
  refs:[
   {id:uid(),titol:"Especialitats per posició",cos:
@@ -382,7 +488,7 @@ function go(btn){
   const t=btn.dataset.tab;
   document.querySelectorAll('.tab').forEach(s=>s.classList.remove('on'));
   document.getElementById('t-'+t).classList.add('on');
-  document.getElementById('page-title').textContent=btn.dataset.title;
+  var _pt=document.getElementById('page-title'); if(_pt)_pt.textContent=btn.dataset.title;
   window.scrollTo(0,0);
 }
 
@@ -390,7 +496,7 @@ function go(btn){
 function esc(s){return (s||"").replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 function badgeClass(e){return e==='En curs'?'b-encurs':e==='Propera'?'b-propera':'b-passada';}
 
-function render(){renderSeasons();renderMiles();renderSquad();renderRefs();}
+function render(){renderSeasons();renderLinia();renderAvisosTab();renderSquad();renderRefs();}
 
 function _sat(d){return new Date(d+'T12:00:00');}
 function _add(d,n){const x=new Date(d);x.setDate(x.getDate()+n);return x;}
@@ -464,6 +570,7 @@ function seasonCard(s,arch){
 }
 function renderSeasons(){
   const el=document.getElementById('seasons');
+  if(!el)return;
   if(!state.seasons.length){el.innerHTML='<div class="empty">Encara no hi ha temporades.</div>';return;}
   const active=state.seasons.filter(s=>s.estat!=='Passada');
   const arch=state.seasons.filter(s=>s.estat==='Passada');
@@ -477,7 +584,7 @@ async function archiveSeason(id){const s=state.seasons.find(x=>x.id===id);if(s){
 function toggleArchive(){const l=document.getElementById('arch-list'),c=document.getElementById('arch-caret');if(!l)return;const open=l.classList.toggle('open');if(c)c.textContent=open?'▾':'▸';}
 
 function renderMiles(){
-  const el=document.getElementById('miles');
+  const el=document.getElementById('miles');if(!el)return;
   const arr=[...state.miles].sort((a,b)=>(a.date||'').localeCompare(b.date||''));
   if(!arr.length){el.innerHTML='<div class="empty">Cap fita marcada.</div>';return;}
   el.innerHTML=arr.map(m=>{
@@ -512,15 +619,15 @@ function renderSquad(){
       const sk=[['POR','por'],['DEF','def'],['CRE','cre'],['EXT','ext'],['PAS','pas'],['ANO','ano'],['PA','pa']]
         .map(a=>{const v=p[a[1]];return (v&&v>0)?a[0]+' '+v:null;}).filter(Boolean);
       const meta=[esc(p.edat||''),p.aniversari?'aniv '+esc(p.aniversari):'',(p.esp&&p.esp!=='—'&&p.esp!=='')?esc(p.esp):''].filter(Boolean).join(' · ');
-      return `<div class="pl">
+      return `<div class="pl${p.rol==='caixa'?' money':''}">
         <div style="flex:1;min-width:0">
-          <div class="nm">${esc(p.nom)}</div>
+          <div class="nm${p.rol==='caixa'?' money':''}">${p.home?'<span class="heart">♥</span>':''}${p.rol==='caixa'?'<span class="coin sm">$</span>':''}${esc(p.nom)}</div>
           <div class="meta">${meta||'—'}</div>
           ${sk.length?`<div class="skills">${sk.join(' · ')}</div>`:''}
           ${p.nota?`<div class="meta" style="margin-top:2px">${esc(p.nota)}</div>`:''}
         </div>
         <div class="tsi">${(p.tsi||0).toLocaleString('ca')}</div>
-        <button class="mini" style="padding:6px 9px" onclick="editPlayer('${p.id}')">✎</button>
+        <button class="mini gc" style="padding:6px 9px" onclick="openProjection('${p.id}')" title="Projecció">📈</button><button class="mini" style="padding:6px 9px" onclick="editPlayer('${p.id}')">✎</button>
       </div>`;}).join('');
     html+='</div>';
   });
@@ -573,13 +680,20 @@ function toICS(id){
 
 /* ---------- mutations ---------- */
 async function toggleDone(id){const m=state.miles.find(x=>x.id===id);if(m){m.done=!m.done;await save();renderMiles();}}
-async function delItem(coll,id){
-  if(!confirm('Segur que ho vols eliminar?'))return;
-  state[coll]=state[coll].filter(x=>x.id!==id);await save();render();
+function confirmSheet(msg,onYes){
+  document.getElementById('sheet-title').textContent='Confirma';
+  document.getElementById('sheet-body').innerHTML='<p style="font-size:14px;line-height:1.5;color:var(--ink)">'+esc(msg)+'</p>';
+  var sv=document.querySelector('.sheet-actions .save'); if(sv){sv.style.display='';sv.textContent='Elimina';}
+  sheetSave=async()=>{await onYes();};
+  document.getElementById('ov').classList.add('on');
+}
+function delItem(coll,id){
+  confirmSheet('Segur que ho vols eliminar?',async()=>{state[coll]=state[coll].filter(x=>x.id!==id);await save();render();});
 }
 
 /* ---------- sheet editor ---------- */
 function openSheet(title,fields,obj,onSave){
+  var _sv=document.querySelector('.sheet-actions .save'); if(_sv){_sv.style.display='';_sv.textContent='Desa';}
   document.getElementById('sheet-title').textContent=title;
   document.getElementById('sheet-body').innerHTML=fields.map(f=>{
     const v=obj[f.k]??'';
@@ -610,6 +724,7 @@ function parsePortaretalls(){
   m=t.match(/TSI:\s*([\d.\s]+)/i); if(m)set('tsi',parseInt(m[1].replace(/[.\s]/g,''),10));
   m=t.match(/\[money\](\d+)\[\/money\]/i); if(m)set('sou',parseInt(m[1],10));
   m=t.match(/Especialitat:\s*([^\n]+)/i); if(m){let e=clean(m[1]); if(e==='-')e=''; set('esp',e);}
+  if(/club d'origen|bonificaci[^\n]*club|mother club/i.test(t))set('home','1');
   const cells={}; let re=/\[th\](.*?)\[\/th\]\[td\](.*?)\[\/td\]/g, mm;
   while((mm=re.exec(t))){const lab=clean(mm[1]).toLowerCase();const num=(mm[2].match(/\((\d+)\)/)||[])[1];if(num!==undefined)cells[lab]=parseInt(num,10);}
   const map={'porteria':'por','defensa':'def','creativitat':'cre','extrem':'ext','passades':'pas','anotació':'ano','anotacio':'ano','pilota aturada':'pa','forma':'forma','resistència':'resist','resistencia':'resist'};
@@ -633,13 +748,10 @@ function editSeason(id){
     {k:'divisio',lab:'Divisió / grup (ex. VI.80)'},
     {k:'jornada',lab:'Jornada actual (1-14)',type:'number'},
     {k:'dataJornada',lab:'Data d\'aquesta jornada (dissabte)',type:'date'},
-    {k:'entrenament',lab:'Entrenament (text lliure)'},
-    {k:'trainType',lab:'Tipus (per pintar el camp)',type:'select',opts:[['','Automàtic (del text)'],['gk','Porteria'],['def','Defensa'],['defpos','Posicions defensives'],['pm','Jugades (creativitat)'],['cross','Centrades (extrem)'],['wingatt','Atacs per banda'],['sco','Anotació'],['shoot','Xut (rematada)'],['spass','Passades curtes'],['tpass','Passades en profunditat'],['setp','Pilotes aturades']]},
-    {k:'competicio',lab:'Competició'},
-    {k:'traspassos',lab:'Traspassos i fites',type:'textarea'}
+    {k:'competicio',lab:'Competició (objectiu)'}
   ],o,async(out)=>{
     if(!id)state.seasons.push(out);else Object.assign(state.seasons.find(x=>x.id===id),out);
-    await save();renderSeasons();
+    await save();renderLinia();
   });
 }
 function editMile(id){
@@ -655,10 +767,10 @@ function editMile(id){
   });
 }
 function editPlayer(id){
-  const o=id?state.players.find(x=>x.id===id):{id:uid(),nom:'',edat:'',tsi:0,esp:'',rol:'perif',nota:''};
+  const o=id?state.players.find(x=>x.id===id):{id:uid(),nom:'',edat:'',tsi:0,esp:'',rol:'perif',home:'',nota:''};
   const rolOpts=[['build','Build (intocable)'],['caixa','Caixa (venda)'],['perif','Perifèric']];
-  const fields=[{k:'rol',lab:'Rol',type:'select',opts:rolOpts}];
-  if(!id)fields.unshift({k:'paste',lab:'Enganxa del portaretalls de Hattrick',type:'paste'});
+  const fields=[{k:'rol',lab:'Rol',type:'select',opts:rolOpts},{k:'home',lab:'De la casa (juvenil)',type:'select',opts:[['','No'],['1','Sí']]}];
+  fields.unshift({k:'paste',lab:'Enganxa el portaretalls de Hattrick (omple skills)',type:'paste'});
   fields.push(
     {k:'nom',lab:'Nom'},
     {k:'edat',lab:'Edat'},
@@ -696,13 +808,14 @@ function editRef(id){
 }
 
 /* ---------- lineup / mini-pitch ---------- */
-const FORMS={
- '4-4-2':[['POR','POR',50,90],['LD','LD',16,70],['DC1','DC',38,72],['DC2','DC',62,72],['LE','LE',84,70],['ED','ED',15,42],['MI1','MI',39,46],['MI2','MI',61,46],['EE','EE',85,42],['DAV1','DAV',38,16],['DAV2','DAV',62,16]],
- '4-3-3':[['POR','POR',50,90],['LD','LD',16,70],['DC1','DC',38,72],['DC2','DC',62,72],['LE','LE',84,70],['MI1','MI',30,50],['MI2','MI',50,52],['MI3','MI',70,50],['EE','EE',16,20],['DAV1','DAV',50,14],['ED','ED',84,20]],
- '3-5-2':[['POR','POR',50,90],['DC1','DC',30,72],['DC2','DC',50,74],['DC3','DC',70,72],['LD','CAR',12,48],['MI1','MI',34,50],['MI2','MI',50,52],['MI3','MI',66,50],['LE','CAR',88,48],['DAV1','DAV',40,16],['DAV2','DAV',60,16]],
- '4-5-1':[['POR','POR',50,90],['LD','LD',16,70],['DC1','DC',38,72],['DC2','DC',62,72],['LE','LE',84,70],['ED','ED',14,40],['MI1','MI',34,48],['MI2','MI',50,50],['MI3','MI',66,48],['EE','EE',86,40],['DAV1','DAV',50,14]],
- '5-3-2':[['POR','POR',50,90],['LD','CAR',12,68],['DC1','DC',32,72],['DC2','DC',50,74],['DC3','DC',68,72],['LE','CAR',88,68],['MI1','MI',34,48],['MI2','MI',50,50],['MI3','MI',66,48],['DAV1','DAV',40,16],['DAV2','DAV',60,16]]
-};
+const BOARD=[
+ ['DAV1','DAV',30,12],['DAV2','DAV',50,10],['DAV3','DAV',70,12],
+ ['EE','EE',12,30],['ED','ED',88,30],
+ ['MI1','MI',32,44],['MI2','MI',50,46],['MI3','MI',68,44],
+ ['LE','LE',14,62],['LD','LD',86,62],
+ ['DC1','DC',30,72],['DC2','DC',50,74],['DC3','DC',70,72],
+ ['POR','POR',50,90]
+];
 const PITCH_SVG=`<svg viewBox="0 0 100 140" preserveAspectRatio="none" fill="none" stroke="rgba(240,255,248,.5)" stroke-width="0.5"><rect x="3" y="3" width="94" height="134" rx="1.5"/><line x1="3" y1="70" x2="97" y2="70"/><circle cx="50" cy="70" r="11"/><rect x="26" y="3" width="48" height="17"/><rect x="26" y="120" width="48" height="17"/></svg>`;
 let pitCurrent=null, pitMatch='lliga';
 function ensureLineups(s){
@@ -712,21 +825,18 @@ function ensureLineups(s){
   return s.lineups;
 }
 function shortName(n){if(!n)return '';const w=n.trim().split(/\s+/)[0];return w.length>9?w.slice(0,8)+'…':w;}
-function curSeason(){return state.seasons.find(x=>x.id===pitCurrent);}
+let pitKind='season';
+function curOwner(){return pitKind==='phase'?((state.timeline||[]).find(x=>x.id===pitCurrent)):state.seasons.find(x=>x.id===pitCurrent);}
 const TRAIN={
-  gk:     {gk:100},
-  def:    {cd:100,wb:100},
-  defpos: {gk:100,cd:100,wb:100,im:100,w:100},
-  pm:     {im:100,w:50},
-  cross:  {w:100,wb:50},
-  wingatt:{fw:100,w:100},
-  sco:    {fw:100},
-  shoot:  {cd:100,wb:100,im:100,w:100,fw:100},
-  spass:  {im:100,w:100,fw:100},
-  tpass:  {cd:100,wb:100,im:100,w:100},
-  setp:   {gk:100,cd:100,wb:100,im:100,w:100,fw:100}
+  gk:  {gk:100},
+  def: {cd:100,wb:100},
+  pm:  {im:100,w:50},
+  wing:{w:100,wb:50},
+  pass:{im:100,w:100,fw:100},
+  sco: {fw:100},
+  setp:{gk:100,cd:100,wb:100,im:100,w:100,fw:100}
 };
-const TRAIN_LABEL={gk:'Porteria',def:'Defensa',defpos:'Posicions defensives',pm:'Jugades',cross:'Centrades',wingatt:'Atacs per banda',sco:'Anotació',shoot:'Xut',spass:'Passades curtes',tpass:'Passades profunditat',setp:'Pilotes aturades'};
+const TRAIN_LABEL={gk:'Porteria',def:'Defensa',pm:'Creativitat',wing:'Extrem',pass:'Passades',sco:'Anotació',setp:'Pilota aturada'};
 function roleGroup(role){
   if(role==='POR')return 'gk';
   if(role==='DC')return 'cd';
@@ -738,63 +848,70 @@ function roleGroup(role){
 function seasonTrainCode(s){
   if(s&&s.trainType)return s.trainType;
   const t=(s&&s.entrenament||'').toLowerCase();
-  if(/posicions defensives|defensive position/.test(t))return 'defpos';
+  if(/porter|keeper|goalkeep/.test(t))return 'gk';
   if(/defens/.test(t))return 'def';
-  if(/jugad|creativ|playmak/.test(t))return 'pm';
-  if(/atac.*banda|wing attack/.test(t))return 'wingatt';
-  if(/centrad|crossing/.test(t))return 'cross';
-  if(/passades curtes|short pass/.test(t))return 'spass';
-  if(/profunditat|passades llargues|through pass/.test(t))return 'tpass';
-  if(/xut|shooting/.test(t))return 'shoot';
+  if(/creativ|jugad|playmak/.test(t))return 'pm';
+  if(/extrem|winger|centrad|banda/.test(t))return 'wing';
+  if(/passad|passing/.test(t))return 'pass';
   if(/anotaci|definici|scoring|golej/.test(t))return 'sco';
-  if(/porter|keeper/.test(t))return 'gk';
   if(/pilota aturada|pilotes aturades|set piece/.test(t))return 'setp';
   return '';}
 function slotPct(role,code){const tbl=TRAIN[code];if(!tbl)return 0;return tbl[roleGroup(role)]||0;}
 function slotColorClass(pct,compete){ if(pct===100)return 'c100'; if(pct===50)return 'c50'; return compete?'cgrey':'cred'; }
-function openPitch(id){pitCurrent=id;pitMatch='lliga';const s=state.seasons.find(x=>x.id===id);ensureLineups(s);
+function openPitch(id){pitKind='season';pitCurrent=id;pitMatch='lliga';const s=state.seasons.find(x=>x.id===id);ensureLineups(s);
   document.getElementById('pit-title').textContent='Alineació · '+(s.title||'Temporada');
   document.getElementById('pit-sub').textContent=(s.entrenament?('Entrenament: '+s.entrenament):`Sense entrenament definit.`)+(seasonTrainCode(s)?(' · Pinta: '+TRAIN_LABEL[seasonTrainCode(s)]):'');
-  renderControls();renderForms();renderPitch();document.getElementById('pitchov').classList.add('on');}
-function closePitch(){document.getElementById('pitchov').classList.remove('on');pitCurrent=null;renderSeasons();}
-function renderControls(){const s=curSeason();
+  renderControls();document.getElementById('pit-forms').innerHTML='';renderPitch();document.getElementById('pitchov').classList.add('on');}
+function closePitch(){document.getElementById('pitchov').classList.remove('on');pitCurrent=null;renderSeasons();renderLinia();}
+function openPhasePitch(id){pitKind='phase';pitCurrent=id;pitMatch='lliga';const ph=(state.timeline||[]).find(x=>x.id===id);if(!ph)return;ensureLineups(ph);
+  document.getElementById('pit-title').textContent='Alineació · '+(TRAIN_LABEL[ph.trainType]||'Fase');
+  document.getElementById('pit-sub').textContent=(ph.setmanes?ph.setmanes+' setmanes':'')+(ph.trainType?' · Pinta: '+TRAIN_LABEL[ph.trainType]:'');
+  renderControls();document.getElementById('pit-forms').innerHTML='';renderPitch();document.getElementById('pitchov').classList.add('on');}
+function renderControls(){const s=curOwner();
   document.getElementById('pit-match').innerHTML=['lliga','copa'].map(m=>`<button class="${m===pitMatch?'on':''}" onclick="setMatch('${m}')">${m==='lliga'?'Lliga':'Copa'}</button>`).join('');
   const c=document.getElementById('pit-compete');
   c.className='compete-btn '+(s.compete?'on':'off');
   c.textContent=s.compete?'● Competint':'● No competint';}
-function setMatch(m){pitMatch=m;renderForms();renderPitch();}
-async function toggleCompete(){const s=curSeason();s.compete=!s.compete;await save();renderControls();renderPitch();}
-function renderForms(){const lu=ensureLineups(curSeason())[pitMatch];
+function setMatch(m){pitMatch=m;renderControls();renderPitch();}
+async function toggleCompete(){const s=curOwner();s.compete=!s.compete;await save();renderControls();renderPitch();}
+function renderForms(){const lu=ensureLineups(curOwner())[pitMatch];
   document.getElementById('pit-forms').innerHTML=Object.keys(FORMS).map(f=>`<button class="${f===lu.formation?'on':''}" onclick="setFormation('${f}')">${f}</button>`).join('');}
-async function setFormation(f){ensureLineups(curSeason())[pitMatch].formation=f;await save();renderForms();renderPitch();}
-function renderPitch(){const s=curSeason();const lu=ensureLineups(s)[pitMatch];const tt=seasonTrainCode(s);const slots=FORMS[lu.formation]||FORMS['4-4-2'];let html=PITCH_SVG;
+async function setFormation(f){ensureLineups(curOwner())[pitMatch].formation=f;await save();renderForms();renderPitch();}
+function renderPitch(){const s=curOwner();const lu=ensureLineups(s)[pitMatch];const tt=seasonTrainCode(s);const slots=BOARD;let html=PITCH_SVG;
   slots.forEach(a=>{const sid=a[0],role=a[1],x=a[2],y=a[3];const d=lu.slots[sid];const pct=slotPct(role,tt);const cc=slotColorClass(pct,s.compete);
-    let cls='tok '+cc,inner=role,nm='';
+    let cls='tok '+cc,inner=role,nm='',money=false,homep=false;
     if(d&&d.toSign){cls+=' sign';nm=(d.label||role)+' ⚑';}
-    else if(d&&d.playerId){const pl=state.players.find(pp=>pp.id===d.playerId);cls+=' filled';nm=pl?shortName(pl.nom):'?';}
+    else if(d&&d.playerId){const pl=state.players.find(pp=>pp.id===d.playerId);cls+=' filled';nm=pl?shortName(pl.nom):'?';money=!!(pl&&pl.rol==='caixa');homep=!!(pl&&pl.home);}
     else {cls+=' empty';}
     const badge=pct===100?'<span class="pb p100">100</span>':pct===50?'<span class="pb p50">50</span>':'';
-    html+=`<div class="${cls}" style="left:${x}%;top:${y}%" onclick="openSlot('${sid}','${role}')"><div class="circ">${inner}${badge}</div>${nm?`<div class="nm">${esc(nm)}</div>`:''}</div>`;});
+    const coin=money?'<span class="coin sm coin-tok">$</span>':'';
+    const heart=homep?'<span class="heart-tok">♥</span>':'';
+    html+=`<div class="${cls}" style="left:${x}%;top:${y}%" onclick="openSlot('${sid}','${role}')"><div class="circ">${inner}${badge}${coin}${heart}</div>${nm?`<div class="nm">${esc(nm)}</div>`:''}</div>`;});
   document.getElementById('pitch-mini').innerHTML=html;renderPitSummary();}
-function renderPitSummary(){const s=curSeason();const tp=trainingPlan(s);
-  const row=(c,l,arr)=>arr.length?`<div class="sm-row ${c}"><b>${l}:</b> ${arr.map(esc).join(', ')}</div>`:'';
-  const html=row('sm-100','Entrenen 100%',tp.full)+row('sm-50','Entrenen 50%',tp.half)+row('sm-sign','A fitxar',tp.sign.map(x=>x.label));
+function renderPitSummary(){const s=curOwner();const tp=trainingPlan(s);
+  const names=arr=>arr.map(e=>(e.home?'♥ ':'')+esc(e.name)+(e.caixa?' $':'')).join(', ');
+  const rowN=(c,l,arr)=>arr.length?`<div class="sm-row ${c}"><b>${l}:</b> ${names(arr)}</div>`:'';
+  const rowS=(c,l,arr)=>arr.length?`<div class="sm-row ${c}"><b>${l}:</b> ${arr.map(esc).join(', ')}</div>`:'';
+  const html=rowN('sm-100','Entrenen 100%',tp.full)+rowN('sm-50','Entrenen 50%',tp.half)+rowS('sm-sign','A fitxar',tp.sign.map(x=>x.label));
   document.getElementById('pit-summary').innerHTML=html||`<div class="sm-row" style="color:var(--dim)">Col·loca l'onze de Lliga i de Copa. El color de cada posició es pinta sol segons l'entrenament de la temporada.</div>`;}
 function trainingPlan(s){const lus=ensureLineups(s);const tt=seasonTrainCode(s);const full=new Map(),half=new Map(),sign=[];
-  ['lliga','copa'].forEach(k=>{const lu=lus[k];const slots=FORMS[lu.formation]||FORMS['4-4-2'];
+  ['lliga','copa'].forEach(k=>{const lu=lus[k];const slots=BOARD;
     slots.forEach(a=>{const sid=a[0],role=a[1];const d=lu.slots[sid];if(!d)return;const pct=slotPct(role,tt);
       if(d.toSign){if(pct>0)sign.push({label:d.label||role,pct});return;}
       const pl=state.players.find(p=>p.id===d.playerId);if(!pl)return;
-      if(pct===100)full.set(pl.id,pl.nom);else if(pct===50)half.set(pl.id,pl.nom);});});
+      const entry={id:pl.id,name:pl.nom,caixa:pl.rol==='caixa',home:!!pl.home};
+      if(pct===100)full.set(pl.id,entry);else if(pct===50)half.set(pl.id,entry);});});
   half.forEach((v,k)=>{if(full.has(k))half.delete(k);});
   return {full:[...full.values()],half:[...half.values()],sign};}
-function trainPlanHTML(s){const tp=trainingPlan(s);
+function trainPlanHTML(s,cutoff){const tp=trainingPlan(s);
   if(!tp.full.length&&!tp.half.length&&!tp.sign.length)return '';
-  const chip=(c,t)=>`<span class="tpc ${c}">${esc(t)}</span>`;
-  const parts=[...tp.full.map(n=>chip('g',n)),...tp.half.map(n=>chip('b',n)),...tp.sign.map(x=>chip('k',x.label+' ⚑'))];
-  return `<div class="field"><div class="lab">Entrenem (${tp.full.length+tp.half.length})</div><div class="tp-chips">${parts.join('')}</div></div>`;}
-function openSlot(sid,role){const lu=ensureLineups(curSeason())[pitMatch];const d=lu.slots[sid]||{};
-  const squadOpts=state.players.slice().sort((a,b)=>(b.tsi||0)-(a.tsi||0)).map(p=>[p.id,shortName(p.nom)+' ('+(p.tsi||0)+')']);
+  const pchip=(base,e)=>`<span class="tpc ${base} tpc-click" onclick="openProjection('${e.id}','${cutoff||''}')">${e.home?'<span class="heart sm">♥</span>':''}${e.caixa?'<span class="coin sm">$</span>':''}${esc(e.name)} <span class="tpc-go">📈</span></span>`;
+  const col=(title,base,cls,arr)=>`<div class="tp-col ${cls}"><div class="tp-h">${title}</div><div class="tp-chips">${arr.length?arr.map(e=>pchip(base,e)).join(''):'<span class="tp-none">—</span>'}</div></div>`;
+  const cols=(tp.full.length||tp.half.length)?`<div class="tp-cols">${col('100%','g','c100',tp.full)}${col('50%','b','c50',tp.half)}</div>`:'';
+  const signHTML=tp.sign.length?`<div class="tp-h" style="margin-top:8px">A fitxar</div><div class="tp-chips">${tp.sign.map(x=>`<span class="tpc k">${esc(x.label)} ⚑</span>`).join('')}</div>`:'';
+  return `<div class="field"><div class="lab">Entrenem (${tp.full.length+tp.half.length})</div>${cols}${signHTML}</div>`;}
+function openSlot(sid,role){const lu=ensureLineups(curOwner())[pitMatch];const d=lu.slots[sid]||{};
+  const squadOpts=state.players.slice().sort((a,b)=>(b.tsi||0)-(a.tsi||0)).map(p=>[p.id,p.nom]);
   const cur=d.toSign?'__sign':(d.playerId||'');
   openSheet('Posició '+role,[
     {k:'player',lab:'Jugador',type:'select',opts:[['','— buida'],...squadOpts,['__sign','➕ A fitxar (negre)']]},
@@ -802,12 +919,282 @@ function openSlot(sid,role){const lu=ensureLineups(curSeason())[pitMatch];const 
   ],{player:cur,label:(d.label||role)},async(out)=>{
     if(out.player==='')delete lu.slots[sid];
     else if(out.player==='__sign')lu.slots[sid]={toSign:true,label:out.label||role};
-    else lu.slots[sid]={playerId:out.player};
+    else {Object.keys(lu.slots).forEach(k=>{if(k!==sid&&lu.slots[k]&&lu.slots[k].playerId===out.player)delete lu.slots[k];});lu.slots[sid]={playerId:out.player};}
     await save();renderPitch();});}
 document.getElementById('pitchov').addEventListener('click',e=>{if(e.target.id==='pitchov')closePitch();});
 
+/* ---------- timeline (Línia) ---------- */
+const POS_OPTS=[['Porter','Porter'],['Central','Central'],['Lateral','Lateral'],['Mig','Mig'],['Extrem','Extrem'],['Davanter','Davanter']];
+const ALERT_OPTS=[['0','Sense avís'],['1','1 dia abans'],['3','3 dies abans'],['7','1 setmana abans'],['14','2 setmanes abans']];
+function alertLabel(a){a=+a;return a===1?'1 dia abans':a===3?'3 dies abans':a===7?'1 setmana abans':a===14?'2 setmanes abans':'';}
+function fmtEur(n){return '€ '+(Number(n)||0).toLocaleString('ca');}
+function tlDate(d){if(!d)return '';const[y,m,dd]=d.split('-');return dd+'-'+m+'-'+y;}
+function daysBefore(dstr,n){const dt=new Date(dstr+'T12:00:00');dt.setDate(dt.getDate()-(+n||0));return dt;}
+function playerLabel(pid){const pl=state.players.find(x=>x.id===pid);if(!pl)return '';return (pl.home?'♥ ':'')+esc(pl.nom)+(pl.rol==='caixa'?' <span class="coin sm">$</span>':'');}
+
+function calGCal(title,date,desc){const u='https://calendar.google.com/calendar/render?action=TEMPLATE&text='+encodeURIComponent(title)+'&dates='+ymd(date)+'/'+nextDay(date)+'&details='+encodeURIComponent(desc||'');window.open(u,'_blank');}
+function calICS(title,date,desc,alertDays){
+  const ics=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//HT//CA','BEGIN:VEVENT','UID:'+uid()+'@ht','DTSTAMP:'+ymd(new Date().toISOString().slice(0,10))+'T000000Z','DTSTART;VALUE=DATE:'+ymd(date),'DTEND;VALUE=DATE:'+nextDay(date),'SUMMARY:'+icsEsc(title),'DESCRIPTION:'+icsEsc(desc||''),'BEGIN:VALARM','TRIGGER:-P'+(+alertDays||1)+'D','ACTION:DISPLAY','DESCRIPTION:'+icsEsc(title),'END:VALARM','END:VEVENT','END:VCALENDAR'].join('\r\n');
+  const b=new Blob([ics],{type:'text/calendar'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=(title.slice(0,20).replace(/[^\w]+/g,'_')||'avis')+'.ics';document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},1500);}
+
+function itemTitle(x){
+  if(x.kind==='train')return 'Entrenament: '+(TRAIN_LABEL[x.trainType]||'');
+  if(x.kind==='sale'){const pl=state.players.find(p=>p.id===x.playerId);return 'Vendre '+(pl?pl.nom:(x.title||'jugador'));}
+  if(x.kind==='buy')return 'Fitxar '+(x.pos||'');
+  return (x.text||'Nota').slice(0,40);
+}
+function bellHTML(x){return (+x.alert>0)?`<span class="bellchip">🔔 ${alertLabel(x.alert)}</span>`:'';}
+function tlActions(x){return `<div class="tl-actions"><button class="mini" onclick="editTimeline('${x.id}')">✎ Edita</button><button class="mini del" onclick="delTimeline('${x.id}')">Elimina</button></div>`;}
+
+function itemHTML(x){
+  if(x.kind==='train'){
+    const col={def:'#86c34a',pm:'#46b4cf',wing:'#ab7ecb',pass:'#46b4cf',sco:'#e0555c',gk:'#e4ab3d',setp:'#86c34a'}[x.trainType]||'#86c34a';
+    const end=x.date?_fmt(_add(_sat(x.date),(+x.setmanes||0)*7)):'';
+    return `<div class="tl-item" style="border-left-color:${col}"><div class="tl-h"><span class="n"><span class="cone"><i></i></span> ${TRAIN_LABEL[x.trainType]||'Entrenament'}</span><span class="d">${x.setmanes||'?'} setm${x.date?' · '+tlDate(x.date)+'→'+end:''}</span></div>
+      ${trainPlanHTML(x)}
+      <div class="tl-actions"><button class="mini gc" onclick="openPhasePitch('${x.id}')">⚽ Alineació</button><button class="mini" onclick="editTimeline('${x.id}')">✎</button><button class="mini del" onclick="delTimeline('${x.id}')">✕</button> ${bellHTML(x)}</div></div>`;
+  }
+  if(x.kind==='sale'){
+    return `<div class="tl-item" style="border-left-color:#f6cf5c"><div class="tl-h"><span class="n">💰 ${x.playerId?playerLabel(x.playerId):esc(x.title||'Venda')}</span><span class="d">${tlDate(x.date)}</span></div>
+      <div class="tl-body"><div class="tl-lab">Forquilla de venda</div><span class="tl-range">${fmtEur(x.priceMin)} – ${fmtEur(x.priceMax)}</span></div>
+      <div class="tl-actions">${tlActions(x).replace('<div class="tl-actions">','').replace('</div>','')} ${bellHTML(x)}</div></div>`;
+  }
+  if(x.kind==='buy'){
+    const reqs=(x.reqsText||'').split('\n').map(s=>s.trim()).filter(Boolean);
+    return `<div class="tl-item" style="border-left-color:#86c34a"><div class="tl-h"><span class="n">➕ Fitxar <span class="tl-poschip">${esc(x.pos||'?')}</span></span><span class="d">${tlDate(x.date)}</span></div>
+      <div class="tl-body">
+        ${reqs.length?`<div class="tl-lab">Ha de complir</div><div class="tl-reqs">${reqs.map(r=>`<span class="tl-req">${esc(r)}</span>`).join('')}</div>`:''}
+        ${x.entrenarem?`<div class="tl-lab">Hi entrenarem</div><span class="tl-train">${esc(x.entrenarem)}</span>`:''}
+        ${x.motiu?`<div class="tl-lab">Per a què</div><div style="font-size:12.5px">${esc(x.motiu)}</div>`:''}
+        ${x.budgetMax?`<div class="tl-budget"><span class="l">Màxim a gastar</span><span class="v">${fmtEur(x.budgetMax)}</span></div>`:''}
+      </div>
+      <div class="tl-actions">${tlActions(x).replace('<div class="tl-actions">','').replace('</div>','')} ${bellHTML(x)}</div></div>`;
+  }
+  return `<div class="tl-item" style="border-left-color:#7d94a0"><div class="tl-h"><span class="n">📝 Nota</span><span class="d">${tlDate(x.date)}</span></div>
+    <div class="tl-body" style="font-size:12.5px">${esc(x.text||'')}</div>
+    <div class="tl-actions">${tlActions(x).replace('<div class="tl-actions">','').replace('</div>','')} ${bellHTML(x)}</div></div>`;
+}
+
+function avisosHTML(){
+  const now=new Date();now.setHours(0,0,0,0);
+  const list=(state.timeline||[]).filter(x=>+x.alert>0&&x.date).map(x=>({x,trig:daysBefore(x.date,x.alert)})).sort((a,b)=>a.trig-b.trig);
+  if(!list.length)return '<div class="empty">Cap avís de moment. Posa un avís (🔔) a un element de la línia i apareixerà aquí.</div>';
+  return list.map(({x})=>{
+    const diff=Math.round((new Date(x.date+'T12:00:00')-now)/864e5);
+    const big=diff<=0?'ara':(diff<=14?diff:tlDate(x.date).slice(0,5));
+    const unit=diff<=0?'':(diff<=14?(diff===1?'dia':'dies'):'');
+    const desc=itemTitle(x);
+    return `<div class="av"><div class="avd"><div class="n">${big}</div><div class="m">${unit}</div></div>
+      <div class="avt"><div class="n">${esc(desc)}</div><div class="s">${tlDate(x.date)} · avís ${alertLabel(x.alert).replace(' abans','')} abans</div></div>
+      <div class="avbtns"><button class="mini gc" onclick="calGCal('${esc(desc).replace(/'/g,"")}','${x.date}','')">📆</button><button class="mini ics" onclick="calICS('${esc(desc).replace(/'/g,"")}','${x.date}','',${+x.alert})">.ics</button></div></div>`;
+  }).join('');
+}
+function renderAvisosTab(){const el=document.getElementById('avisos-list');if(el)el.innerHTML=avisosHTML();}
+
+let liniaIdx=-1, tlDefaultDate='';
+function ordSeasons(){return state.seasons.filter(s=>s.temporada).sort((a,b)=>(+a.temporada)-(+b.temporada));}
+function seaRange(s){if(s.dataJornada&&s.jornada){const D=seasonDates(s);return{start:D.start,end:D.nextStart};}return null;}
+function itemSeaIdx(x,seasons){const d=x.date?new Date(x.date+'T12:00:00'):null;if(!d)return seasons.length-1;
+  for(let i=0;i<seasons.length;i++){const R=seaRange(seasons[i]);if(R&&d>=R.start&&d<R.end)return i;}
+  for(let i=0;i<seasons.length;i++){const R=seaRange(seasons[i]);if(R&&d<R.start)return i;}
+  return seasons.length-1;}
+function goSeason(i){liniaIdx=i;renderLinia();}
+function prevSeason(){if(liniaIdx>0)goSeason(liniaIdx-1);}
+function nextSeason(){if(liniaIdx<ordSeasons().length-1)goSeason(liniaIdx+1);}
+function phaseCardHTML(x,cutoff){
+  const col={def:'#86c34a',pm:'#46b4cf',wing:'#ab7ecb',pass:'#46b4cf',sco:'#e0555c',gk:'#e4ab3d',setp:'#86c34a'}[x.trainType]||'#86c34a';
+  const end=x.date?_fmt(_add(_sat(x.date),(+x.setmanes||0)*7)):'';
+  return `<div class="lp-phase" style="border-left-color:${col}"><div class="lp-ph-h"><span class="n"><span class="cone"><i></i></span> ${TRAIN_LABEL[x.trainType]||'Entrenament'}</span><span class="d">${x.setmanes||'?'} setm${x.date?' · fins '+end:''}</span></div>${trainPlanHTML(x,cutoff)}<div class="tl-actions"><button class="mini gc" onclick="openPhasePitch('${x.id}')">⚽ Alineació</button><button class="mini" onclick="editTimeline('${x.id}')">✎</button><button class="mini del" onclick="delTimeline('${x.id}')">✕</button> ${bellHTML(x)}</div></div>`;
+}
+function tradeCardHTML(x){
+  if(x.kind==='sale')return `<div class="lp-trade sell"><div class="lp-ph-h"><span class="n">💰 ${x.playerId?playerLabel(x.playerId):esc(x.title||'Venda')}</span><span class="d">${tlDate(x.date)}</span></div><div class="tl-range" style="margin-top:6px">${fmtEur(x.priceMin)} – ${fmtEur(x.priceMax)}</div><div class="tl-actions"><button class="mini" onclick="editTimeline('${x.id}')">✎</button><button class="mini del" onclick="delTimeline('${x.id}')">✕</button> ${bellHTML(x)}</div></div>`;
+  const reqs=(x.reqsText||'').split('\n').map(s=>s.trim()).filter(Boolean);
+  return `<div class="lp-trade buy"><div class="lp-ph-h"><span class="n">➕ Fitxar <span class="tl-poschip">${esc(x.pos||'?')}</span></span><span class="d">${tlDate(x.date)}</span></div>${reqs.length?`<div class="tl-reqs" style="margin-top:8px">${reqs.map(r=>`<span class="tl-req">${esc(r)}</span>`).join('')}</div>`:''}${x.entrenarem?`<div class="lp-mini">Hi entrenarem: <b>${esc(x.entrenarem)}</b></div>`:''}${x.budgetMax?`<div class="lp-mini">Màxim: <b style="color:#f2cf7a">${fmtEur(x.budgetMax)}</b></div>`:''}<div class="tl-actions"><button class="mini" onclick="editTimeline('${x.id}')">✎</button><button class="mini del" onclick="delTimeline('${x.id}')">✕</button> ${bellHTML(x)}</div></div>`;
+}
+function noteCardHTML(x){return `<div class="lp-note"><div class="lp-ph-h"><span class="n">📝 Nota</span><span class="d">${tlDate(x.date)}</span></div><div style="font-size:12.5px;margin-top:4px">${esc(x.text||'')}</div><div class="tl-actions"><button class="mini" onclick="editTimeline('${x.id}')">✎</button><button class="mini del" onclick="delTimeline('${x.id}')">✕</button> ${bellHTML(x)}</div></div>`;}
+function renderLinia(){
+  const el=document.getElementById('linia');if(!el)return;
+  const seasons=ordSeasons();
+  if(!seasons.length){el.innerHTML='<div class="empty">Encara no hi ha temporades.</div><button class="tl-add" style="border-color:rgba(228,171,61,.5);color:#e4ab3d;margin-top:10px" onclick="defineNextSeason()">＋ Definir temporada</button>';renderAvisosTab();return;}
+  if(liniaIdx<0){const t=new Date();t.setHours(12,0,0,0);let idx=0;for(let i=0;i<seasons.length;i++){const R=seaRange(seasons[i]);if(R&&t>=R.start&&t<R.end){idx=i;break;}if(R&&t>=R.start)idx=i;}liniaIdx=idx;}
+  if(liniaIdx>=seasons.length)liniaIdx=seasons.length-1;if(liniaIdx<0)liniaIdx=0;
+  const s=seasons[liniaIdx];const R=seaRange(s);tlDefaultDate=R?_iso(R.start):(s.dataJornada||'');
+  const L=(s.dataJornada&&s.jornada)?seasonLive(s):null;
+  const jl=L?(L.phase==='live'?'Jornada '+L.jornada+'/14 · en curs':L.phase==='upcoming'?'pendent':L.phase==='off'?'off-season':'acabada'):(s.estat||'');
+  const items=(state.timeline||[]);const mine=items.filter(x=>itemSeaIdx(x,seasons)===liniaIdx);
+  const byd=(a,b)=>(a.date||'').localeCompare(b.date||'');
+  const trains=mine.filter(x=>x.kind==='train').sort(byd);
+  const trades=mine.filter(x=>x.kind==='sale'||x.kind==='buy').sort(byd);
+  const notes=mine.filter(x=>x.kind==='note').sort(byd);
+  const dots=seasons.map((_,i)=>`<i class="${i===liniaIdx?'on':''}" onclick="goSeason(${i})"></i>`).join('');
+  const isLast=liniaIdx===seasons.length-1;
+  el.innerHTML=`
+    <div class="lp-pager"><button class="lp-arrow" ${liniaIdx===0?'disabled':''} onclick="prevSeason()">‹</button>
+      <div class="lp-pt"><div class="t1">🗓️ T${s.temporada}${s.divisio?' · '+esc(s.divisio):''}</div><div class="t2">${esc(jl)}</div></div>
+      <button class="lp-arrow" ${isLast?'disabled':''} onclick="nextSeason()">›</button></div>
+    <div class="lp-dots">${dots}</div>
+    <div class="lp-card">
+      ${s.competicio?`<div class="lp-obj">🏆 ${esc(s.competicio)}</div>`:''}
+      <div class="lp-lab">Entrenament</div>${trains.length?trains.map(function(x){return phaseCardHTML(x,R?_iso(R.end):'');}).join(''):'<div class="lp-empty">Cap fase d\'entrenament.</div>'}
+      <div class="lp-lab">Traspassos</div>${trades.length?trades.map(tradeCardHTML).join(''):'<div class="lp-empty">Cap venda ni fitxatge.</div>'}
+      <div class="lp-lab">Notes</div>${notes.length?notes.map(noteCardHTML).join(''):'<div class="lp-empty">Cap nota.</div>'}
+      <div class="lp-actions"><button class="mini seaedit" onclick="editSeason('${s.id}')">✎ Edita temporada</button><button class="mini del" onclick="delSeasonTL('${s.id}')">Elimina</button></div>
+    </div>
+    ${isLast?`<button class="tl-add" style="border-color:rgba(228,171,61,.5);color:#e4ab3d" onclick="defineNextSeason()">＋ Definir següent temporada</button>`:''}`;
+  renderAvisosTab();
+}
+
+/* add / edit / delete */
+function addTimelineItem(){
+  document.getElementById('sheet-title').textContent='Afegeix a la línia';
+  document.getElementById('sheet-body').innerHTML=`
+    <button class="tl-type" onclick="closeSheet();editSeason()">🗓️ Temporada</button>
+    <button class="tl-type" onclick="closeSheet();editTrain()"><span class="cone"><i></i></span> Entrenament</button>
+    <button class="tl-type" onclick="closeSheet();editSale()">💰 Venda</button>
+    <button class="tl-type" onclick="closeSheet();editBuy()">➕ Fitxatge</button>
+    <button class="tl-type" onclick="closeSheet();editNote()">📝 Nota</button>`;
+  sheetSave=null;
+  document.querySelector('.sheet-actions .save').style.display='none';
+  document.getElementById('ov').classList.add('on');
+}
+function tlSave(id,obj){if(!state.timeline)state.timeline=[];if(id){Object.assign(state.timeline.find(x=>x.id===id),obj);}else{state.timeline.push({id:uid(),...obj});}save();renderLinia();}
+function editTimeline(id){const x=(state.timeline||[]).find(i=>i.id===id);if(!x)return;
+  if(x.kind==='train')editTrain(id);else if(x.kind==='sale')editSale(id);else if(x.kind==='buy')editBuy(id);else editNote(id);}
+function delTimeline(id){confirmSheet('Eliminar aquest element?',async()=>{state.timeline=(state.timeline||[]).filter(x=>x.id!==id);await save();renderLinia();});}
+function delSeasonTL(id){confirmSheet('Eliminar aquesta temporada de la línia?',async()=>{state.seasons=state.seasons.filter(s=>s.id!==id);await save();renderLinia();});}
+function defineSeason(temp,dateISO){const s={id:uid(),title:'Temporada '+temp,estat:'Propera',temporada:temp,divisio:'',jornada:1,dataJornada:dateISO,competicio:''};state.seasons.push(s);save();editSeason(s.id);}
+function defineNextSeason(){const anch=state.seasons.filter(s=>s.dataJornada&&s.jornada&&s.temporada).sort((a,b)=>(+a.temporada)-(+b.temporada));if(anch.length){const last=anch[anch.length-1];const D=seasonDates(last);defineSeason((+last.temporada)+1,_iso(D.nextStart));}else{editSeason();}}
+
+function nextTrainStartISO(){
+  const trains=(state.timeline||[]).filter(x=>x.kind==='train'&&x.date&&x.setmanes);
+  if(trains.length){
+    let best=null,bestEnd=null;
+    trains.forEach(x=>{const end=_add(_sat(x.date),(+x.setmanes||0)*7);if(!bestEnd||end>bestEnd){bestEnd=end;best=x;}});
+    return _iso(bestEnd);
+  }
+  if(tlDefaultDate)return tlDefaultDate;
+  const s=ordSeasons()[liniaIdx]||ordSeasons()[0];const R=s?seaRange(s):null;
+  return R?_iso(R.start):_iso(new Date());
+}
+function splitTrainPhase(ph,depth){
+  depth=depth||0; if(depth>8)return;
+  if(!ph.date||!ph.setmanes)return;
+  const seasons=ordSeasons();let si=-1;const pd=new Date(ph.date+'T12:00:00');
+  for(let i=0;i<seasons.length;i++){const R=seaRange(seasons[i]);if(R&&pd>=R.start&&pd<R.end){si=i;break;}}
+  if(si<0)return;
+  const R=seaRange(seasons[si]);
+  const fitWeeks=Math.max(0,Math.round((R.end-pd)/6048e5));
+  if((+ph.setmanes)<=fitWeeks)return;
+  const remaining=(+ph.setmanes)-fitWeeks;
+  ph.setmanes=fitWeeks;
+  let next=seasons[si+1];
+  if(!next){const last=seasons[si];const D=seasonDates(last);
+    next={id:uid(),title:'Temporada '+((+last.temporada)+1),estat:'Propera',temporada:(+last.temporada)+1,divisio:'',jornada:1,dataJornada:_iso(D.nextStart),competicio:''};
+    state.seasons.push(next);}
+  const nr=seaRange(next);const nStart=nr?_iso(nr.start):next.dataJornada;
+  const cont={id:uid(),kind:'train',trainType:ph.trainType,setmanes:remaining,date:nStart,alert:0};
+  state.timeline.push(cont);
+  splitTrainPhase(cont,depth+1);
+}
+function editTrain(id){const x=id?state.timeline.find(i=>i.id===id):{kind:'train',trainType:'def',setmanes:8,date:nextTrainStartISO(),alert:0};
+  openSheet(id?'Edita entrenament':'Nou entrenament',[
+    {k:'trainType',lab:'Tipus',type:'select',opts:[['gk','Porteria'],['def','Defensa'],['pm','Creativitat'],['wing','Extrem'],['pass','Passades'],['sco','Anotació'],['setp','Pilota aturada']]},
+    {k:'setmanes',lab:'Setmanes',type:'number'},
+    {k:'date',lab:'Data d\'inici',type:'date'},
+    {k:'alert',lab:'Avís',type:'select',opts:ALERT_OPTS}
+  ],{trainType:x.trainType,setmanes:x.setmanes,date:x.date,alert:String(x.alert||0)},async(o)=>{
+    let ph;
+    if(id){ph=state.timeline.find(i=>i.id===id);Object.assign(ph,{kind:'train',trainType:o.trainType,setmanes:+o.setmanes,date:o.date,alert:+o.alert});}
+    else{ph={id:uid(),kind:'train',trainType:o.trainType,setmanes:+o.setmanes,date:o.date,alert:+o.alert};state.timeline.push(ph);}
+    splitTrainPhase(ph);
+    await save();renderLinia();
+  });}
+
+function editSale(id){const x=id?state.timeline.find(i=>i.id===id):{kind:'sale',playerId:'',title:'',priceMin:0,priceMax:0,date:tlDefaultDate,alert:0};
+  const squad=state.players.slice().sort((a,b)=>(b.tsi||0)-(a.tsi||0)).map(p=>[p.id,p.nom]);
+  openSheet(id?'Edita venda':'Nova venda',[
+    {k:'playerId',lab:'Jugador (de la plantilla)',type:'select',opts:[['','— text lliure'],...squad]},
+    {k:'title',lab:'Títol (si no tries jugador)'},
+    {k:'priceMin',lab:'Preu mínim (€)',type:'number'},
+    {k:'priceMax',lab:'Preu màxim (€)',type:'number'},
+    {k:'date',lab:'Data',type:'date'},
+    {k:'alert',lab:'Avís',type:'select',opts:ALERT_OPTS}
+  ],{playerId:x.playerId||'',title:x.title||'',priceMin:x.priceMin,priceMax:x.priceMax,date:x.date,alert:String(x.alert||0)},async(o)=>{tlSave(id,{kind:'sale',playerId:o.playerId,title:o.title,priceMin:o.priceMin,priceMax:o.priceMax,date:o.date,alert:+o.alert});});}
+
+function editBuy(id){const x=id?state.timeline.find(i=>i.id===id):{kind:'buy',pos:'Lateral',reqsText:'',entrenarem:'',motiu:'',budgetMax:0,date:tlDefaultDate,alert:0};
+  openSheet(id?'Edita fitxatge':'Nou fitxatge',[
+    {k:'pos',lab:'Posició',type:'select',opts:POS_OPTS},
+    {k:'reqsText',lab:'Requisits (un per línia, ex. Defensa 8–10)',type:'textarea'},
+    {k:'entrenarem',lab:'Hi entrenarem'},
+    {k:'motiu',lab:'Per a què'},
+    {k:'budgetMax',lab:'Màxim a gastar (€)',type:'number'},
+    {k:'date',lab:'Data',type:'date'},
+    {k:'alert',lab:'Avís',type:'select',opts:ALERT_OPTS}
+  ],{pos:x.pos,reqsText:x.reqsText||'',entrenarem:x.entrenarem||'',motiu:x.motiu||'',budgetMax:x.budgetMax,date:x.date,alert:String(x.alert||0)},async(o)=>{tlSave(id,{kind:'buy',pos:o.pos,reqsText:o.reqsText,entrenarem:o.entrenarem,motiu:o.motiu,budgetMax:o.budgetMax,date:o.date,alert:+o.alert});});}
+
+function editNote(id){const x=id?state.timeline.find(i=>i.id===id):{kind:'note',text:'',date:tlDefaultDate,alert:0};
+  openSheet(id?'Edita nota':'Nova nota',[
+    {k:'text',lab:'Text',type:'textarea'},
+    {k:'date',lab:'Data',type:'date'},
+    {k:'alert',lab:'Avís',type:'select',opts:ALERT_OPTS}
+  ],{text:x.text||'',date:x.date,alert:String(x.alert||0)},async(o)=>{tlSave(id,{kind:'note',text:o.text,date:o.date,alert:+o.alert});});}
+
+/* ---------- training projection engine ---------- */
+const TRAIN_SKILL={gk:'por',def:'def',pm:'cre',wing:'ext',pass:'pas',sco:'ano',setp:'pa'};
+const SKILL_MULT={por:2.0,def:1.0,cre:1.0,ext:1.0,pas:1.0,ano:1.0,pa:2.5};
+const SKILL_ORDER=['por','def','cre','ext','pas','ano','pa'];
+const SKILL_LAB={por:'Porteria',def:'Defensa',cre:'Creativitat',ext:'Extrem',pas:'Passades',ano:'Anotació',pa:'Pilota at.'};
+const LVLNAME=['inexistent','desastrós','horrible','pobre','dèbil','insuficient','acceptable','notable','excel·lent','formidable','destacat','brillant','magnífic','classe mundial','sobrenatural','titànic','extraterrestre','mític','màgic','utòpic','diví'];
+function baseWeeks(level){return 0.45*Math.pow(1.31,Math.max(0,level));}
+function coachMult(){const c=state.coach||{};const tr=+c.trainer||5,a1=+c.a1||0,a2=+c.a2||0;const score=tr+0.4*(a1+a2);return (5+0.4*10)/Math.max(1,score);}
+function editCoach(){const c=state.coach||{trainer:5,a1:5,a2:5};openSheet('Personal · entrenador i assistents',[{k:'trainer',lab:'Entrenador (conos 1-5)',type:'number'},{k:'a1',lab:'Assistent 1 (conos 0-5)',type:'number'},{k:'a2',lab:'Assistent 2 (conos 0-5)',type:'number'}],{trainer:c.trainer,a1:c.a1,a2:c.a2},async(o)=>{state.coach={trainer:+o.trainer||5,a1:+o.a1||0,a2:+o.a2||0};await save();});}
+function parseAge(e){const m=(''+ (e||'')).match(/\d+/);return m?+m[0]:20;}
+function playerRateInPhase(pl,ph){let rate=0;if(!ph.lineups)return 0;['lliga','copa'].forEach(m=>{const lu=ph.lineups[m];if(!lu||!lu.slots)return;Object.entries(lu.slots).forEach(([sid,d])=>{if(d&&d.playerId===pl.id){const a=BOARD.find(x=>x[0]===sid);const pct=a?slotPct(a[1],ph.trainType):0;if(pct>rate)rate=pct;}});});return rate;}
+function projectPlayer(pl,throughISO){
+  const sk={};SKILL_ORDER.forEach(k=>{sk[k]={lvl:+(pl[k]||0),prog:0};});
+  const startAge=parseAge(pl.edat);
+  const phases=(state.timeline||[]).filter(x=>x.kind==='train'&&x.trainType&&x.setmanes&&(!throughISO||!x.date||x.date<=throughISO)).sort((a,b)=>(a.date||'').localeCompare(b.date||''));
+  let weeks=0;
+  phases.forEach(ph=>{
+    const wks=+ph.setmanes||0;const key=TRAIN_SKILL[ph.trainType];const rate=playerRateInPhase(pl,ph);
+    for(let w=0;w<wks;w++){
+      if(key&&rate>0&&sk[key]){
+        const ageNow=startAge+weeks/16;const af=1+0.04*Math.max(0,ageNow-17);const rf=rate===50?2:1;
+        const bw=baseWeeks(sk[key].lvl)*(SKILL_MULT[key]||1)*af*rf*coachMult();
+        sk[key].prog+=1/bw;
+        while(sk[key].prog>=1&&sk[key].lvl<20){sk[key].lvl++;sk[key].prog-=1;}
+        if(sk[key].lvl>=20)sk[key].prog=Math.min(sk[key].prog,0.999);
+      }
+      weeks++;
+    }
+  });
+  return {sk,startAge,endAge:startAge+weeks/16,weeks};
+}
+function openProjection(id,throughISO){
+  const pl=state.players.find(p=>p.id===id);if(!pl)return;
+  const P=projectPlayer(pl,throughISO);
+  const rows=SKILL_ORDER.map(k=>{
+    const s=P.sk[k];const start=+(pl[k]||0);const gain=s.lvl-start;
+    const fillW=Math.min(100,start/20*100);const gainW=Math.max(0,Math.min(100,(s.lvl+s.prog)/20*100)-fillW);
+    const plus=gain>0?('+'+gain):((s.prog>0.03&&s.lvl<20)?('+'+Math.round(s.prog*100)+'%'):'');
+    return `<div class="pj-row"><span class="pj-lab">${SKILL_LAB[k]}</span>
+      <div class="pj-bar"><div class="pj-fill" style="width:${fillW}%"></div><div class="pj-gain" style="left:${fillW}%;width:${gainW}%"></div></div>
+      <span class="pj-lname">${s.lvl>0?(LVLNAME[s.lvl]||''):'—'}</span><span class="pj-num">${s.lvl||'–'}</span><span class="pj-plus">${plus}</span></div>`;
+  }).join('');
+  const trained=(state.timeline||[]).some(x=>x.kind==='train'&&playerRateInPhase(pl,x)>0);
+  document.getElementById('sheet-title').textContent='Projecció';
+  document.getElementById('sheet-body').innerHTML=`
+    <div class="pj-hd">${pl.home?'<span class="heart">♥</span> ':''}${esc(pl.nom)}<span class="pj-age">${Math.floor(P.startAge)}a → ${Math.floor(P.endAge)}a · ${Math.round(P.weeks)} setm</span></div>
+    <div class="pj-tag">▲ projecció seguint el pla · en groc el que puja</div>
+    ${rows}
+    ${trained?'':'<div class="pj-warn">Aquest jugador no està col·locat a cap fase d\'entrenament del pla. Posa\'l a l\'alineació d\'una fase per veure la projecció.</div>'}
+    <div class="pj-disc">Estimació (nivell + edat · entrenador ${(state.coach||{}).trainer||5} conos · assist. ${(state.coach||{}).a1||0}+${(state.coach||{}).a2||0}). Les skills mitjanes es projecten bé; les molt altes amb prou feines es mouen i l\'error creix a la distància.</div>`;
+  sheetSave=null;
+  var sv=document.querySelector('.sheet-actions .save');if(sv)sv.style.display='none';
+  document.getElementById('ov').classList.add('on');
+}
 /* ---------- boot ---------- */
-(async()=>{await load();if(autofillSeasonChain())await save();render();renderSyncBtn();if(syncEnabled())pullSync();})();
+(async()=>{await load();state.timeline=state.timeline||[];if(!state.coach||state.coach.a1===undefined)state.coach={trainer:5,a1:5,a2:5};if(autofillSeasonChain())await save();render();renderSyncBtn();if(syncEnabled())pullSync();})();
 window.addEventListener('focus',()=>{if(syncEnabled())pullSync();});
 </script>
 </body>
