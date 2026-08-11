@@ -1203,31 +1203,35 @@ function openStats(id,seasonId,mode,sid,role){
   const pl=state.players.find(p=>p.id===id);if(!pl)return;
   const s=seasonId?state.seasons.find(x=>x.id===seasonId):null;
   const R=s?seaRange(s):null;
-  const fromISO=R?_iso(R.start):'', toISO=R?_iso(R.end):'';
-  const P=projectPlayer(pl,fromISO,toISO);
+  const startISO=R?_iso(R.start):'', endISO=R?_iso(R.end):'';
+  // ACHIEVED (green) = tot l'entrenament ABANS d'aquesta temporada; PROJECTED = fins al final d'aquesta temporada
+  const ach=(mode==='plan')?projectPlayer(pl,'',startISO):null;
+  const proj=(mode==='plan')?projectPlayer(pl,'',endISO):null;
   const rows=SKILL_ORDER.map(k=>{
-    const cur=+(pl[k]||0);const sk=P.sk[k];
-    const showLvl=(mode==='plan')?sk.lvl:cur;
-    const fillW=Math.min(100,cur/20*100);
-    const gainW=(mode==='plan')?Math.max(0,Math.min(100,(sk.lvl+sk.prog)/20*100)-fillW):0;
-    const gain=(mode==='plan')?(sk.lvl-cur):0;
-    const plus=(mode==='plan')?(gain>0?('+'+gain):((sk.prog>0.03&&sk.lvl<20)?('+'+Math.round(sk.prog*100)+'%'):'')):'';
+    const cur=+(pl[k]||0);
+    let achLvl,achFrac,projFrac;
+    if(mode==='plan'){achLvl=ach.sk[k].lvl;achFrac=ach.sk[k].lvl+ach.sk[k].prog;projFrac=proj.sk[k].lvl+proj.sk[k].prog;}
+    else {achLvl=cur;achFrac=cur;projFrac=cur;}
+    const greenW=Math.min(100,achFrac/20*100);
+    const yellowW=Math.max(0,Math.min(100,projFrac/20*100)-greenW);
+    const gain=(mode==='plan')?(proj.sk[k].lvl-achLvl):0;
+    const plus=(mode==='plan')?(gain>0?('+'+gain):((projFrac-achFrac>0.03&&proj.sk[k].lvl<20)?('+'+Math.round((projFrac-achFrac)*100)+'%'):'')):'';
     return `<div class="pj-row"><span class="pj-lab">${SKILL_LAB[k]}</span>
-      <div class="pj-bar"><div class="pj-fill" style="width:${fillW}%"></div><div class="pj-gain" style="left:${fillW}%;width:${gainW}%"></div></div>
-      <span class="pj-lname">${showLvl>0?(LVLNAME[showLvl]||''):'—'}</span><span class="pj-num">${showLvl||'–'}</span><span class="pj-plus">${plus}</span></div>`;
+      <div class="pj-bar"><div class="pj-fill" style="width:${greenW}%"></div><div class="pj-gain" style="left:${greenW}%;width:${yellowW}%"></div></div>
+      <span class="pj-lname">${achLvl>0?(LVLNAME[achLvl]||''):'—'}</span><span class="pj-num">${achLvl||'–'}</span><span class="pj-plus">${plus}</span></div>`;
   }).join('');
-  const trained=R?(state.timeline||[]).some(x=>x.kind==='train'&&x.date&&x.date>=fromISO&&x.date<toISO&&playerRateInPhase(pl,x)>0):(state.timeline||[]).some(x=>x.kind==='train'&&playerRateInPhase(pl,x)>0);
+  const trained=R?(state.timeline||[]).some(x=>x.kind==='train'&&x.date&&x.date>=startISO&&x.date<endISO&&playerRateInPhase(pl,x)>0):false;
   const sc=seasonId||'';
   const ex=sid?(",'"+sid+"','"+role+"'"):'';
   document.getElementById('sheet-title').textContent='Estadístiques';
   document.getElementById('sheet-body').innerHTML=`
     <div class="pj-hd">${pl.home?'<span class="heart">♥</span> ':''}${esc(pl.nom)}<span class="pj-age">${esc(pl.edat||'')}${pl.esp?' · '+esc(pl.esp):''}</span></div>
     <div class="pj-toggle"><button class="${mode==='now'?'on':''}" onclick="openStats('${id}','${sc}','now'${ex})">Ara</button><button class="${mode==='plan'?'on':''}" onclick="openStats('${id}','${sc}','plan'${ex})">Amb el pla</button></div>
-    ${mode==='plan'?`<div class="pj-tag">▲ projecció ${s?('T'+s.temporada):'del pla'} · en groc el que puja</div>`:''}
+    ${mode==='plan'?`<div class="pj-tag"><span style="color:#5a9a34">verd</span> = assolit (temporades anteriors) · <span style="color:#e4ab3d">groc</span> = puja a ${s?('T'+s.temporada):'aquesta temporada'}</div>`:''}
     ${rows}
-    ${(mode==='plan'&&!trained)?'<div class="pj-warn">No entrena en aquesta temporada; posa\'l a l\'alineació d\'una fase per veure la projecció.</div>':''}
+    ${(mode==='plan'&&!trained)?'<div class="pj-warn">No entrena en aquesta temporada; posa\'l a l\'alineació d\'una fase per veure el que puja.</div>':''}
     ${sid?`<div class="tl-actions" style="margin-top:12px"><button class="mini gc" onclick="openSlot('${sid}','${role}')">✎ Canviar en aquesta posició</button></div>`:''}
-    <div class="pj-disc">${mode==='plan'?`Projecció d'aquesta temporada (nivell + edat · entrenador ${(state.coach||{}).trainer||5} conos). Calibrada amb dades reals.`:'Estadístiques actuals. Toca "Amb el pla" per veure què puja aquesta temporada.'}</div>`;
+    <div class="pj-disc">${mode==='plan'?`Estimació (nivell + edat). El verd assumeix fet l'entrenament de les temporades anteriors.`:'Estadístiques actuals (avui).'}</div>`;
   sheetSave=null;
   var sv=document.querySelector('.sheet-actions .save');if(sv)sv.style.display='none';
   document.getElementById('ov').classList.add('on');
