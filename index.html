@@ -288,13 +288,34 @@
   .pj-plus{font-family:"Oswald";font-weight:700;font-size:12px;color:#e4ab3d}
   .pj-warn{margin-top:12px;background:rgba(228,171,61,.1);border:1px solid rgba(228,171,61,.4);border-radius:9px;padding:9px 11px;font-size:11.5px;color:#f4d79a}
   .pj-disc{font-size:10.5px;color:var(--dim);margin-top:12px;line-height:1.4}
+
+  .pj-toggle{display:flex;gap:6px;margin-bottom:12px}
+  .pj-toggle button{flex:1;padding:8px;border-radius:8px;border:1px solid var(--brd);background:var(--panel2);color:var(--dim);font-family:"Oswald";font-weight:600;font-size:12px;cursor:pointer}
+  .pj-toggle button.on{background:color-mix(in srgb,var(--acc) 18%,transparent);border-color:color-mix(in srgb,var(--acc) 55%,transparent);color:var(--acc)}
+  .curve-card{border:1px solid var(--brd);border-radius:13px;background:var(--panel);padding:13px}
+  .curve-legend{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:10px}
+  .curve-legend .lg{display:flex;align-items:center;gap:5px;font-family:"Oswald";font-weight:600;font-size:11.5px}
+  .curve-legend .dot{width:11px;height:3px;border-radius:2px}
+  .curve-wrap{position:relative;height:170px;margin-left:22px;border-left:1px solid var(--brd);border-bottom:1px solid var(--brd)}
+  .curve-wrap svg{position:absolute;inset:0;width:100%;height:100%}
+  .curve-wrap .cy{position:absolute;left:-20px;font-size:9px;color:var(--dim);transform:translateY(-50%)}
+  .curve-x{display:flex;justify-content:space-between;margin:6px 0 0 22px;font-size:9px;color:var(--dim)}
+  .curve-note{font-size:10.5px;color:var(--dim);margin-top:8px;line-height:1.4}
+  .top-btns{display:flex;gap:6px}
+  .ic svg{width:23px;height:23px;display:block;margin:0 auto}
+  .sync-btn svg{width:21px;height:21px;display:block;margin:0 auto}
+  .brand-v{opacity:.5;font-weight:400;font-size:.85em}
+  .bk-sec{margin-top:16px;padding-top:14px;border-top:1px solid var(--brd)}
+  .bk-h{font-family:"Oswald";font-weight:600;font-size:13px;margin-bottom:8px}
+  .bk-btns{display:flex;gap:8px;flex-wrap:wrap}
+  .bk-note{font-size:10.5px;color:var(--dim);margin-top:8px;line-height:1.4}
 </style>
 </head>
 <body>
 <header class="top">
   <div class="top-row">
-    <div><div class="brand">Hattrick · Projecte llarg termini</div></div>
-    <button class="sync-btn" id="sync-btn" onclick="openSync()" title="Sincronització">☁</button>
+    <div><div class="brand">Hattrick · Projecte llarg termini <span class="brand-v">v11-08a</span></div></div>
+    <div class="top-btns"><button class="sync-btn" onclick="hardRefresh()" title="Actualitza l'app"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg></button><button class="sync-btn" id="sync-btn" onclick="openSync()" title="Sincronització"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19a4.5 4.5 0 0 0 .5-9 6 6 0 0 0-11.6-1.6A4 4 0 0 0 6 19h11.5z"/></svg></button></div>
   </div>
   <div class="sync-status" id="sync-status"></div>
 </header>
@@ -319,15 +340,16 @@
 
   <section class="tab" id="t-ref">
     <div class="sec-head"><h2>Referència</h2><button class="add" onclick="editRef()">+ Fitxa</button></div>
+    <div id="curves" style="margin-bottom:16px"></div>
     <div id="refs"></div>
   </section>
 </main>
 
 <nav class="tabs">
-  <button class="on" data-tab="linia" data-title="Línia" onclick="go(this)"><span class="ic">📈</span>Línia</button>
-  <button data-tab="avisos" data-title="Avisos" onclick="go(this)"><span class="ic">🔔</span>Avisos</button>
-  <button data-tab="squad" data-title="Plantilla" onclick="go(this)"><span class="ic">👥</span>Plantilla</button>
-  <button data-tab="ref" data-title="Referència" onclick="go(this)"><span class="ic">📖</span>Referència</button>
+  <button class="on" data-tab="linia" data-title="Ruta" onclick="go(this)"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2z"/><path d="M9 4v14M15 6v14"/></svg></span>Ruta</button>
+  <button data-tab="avisos" data-title="Avisos" onclick="go(this)"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg></span>Avisos</button>
+  <button data-tab="squad" data-title="Plantilla" onclick="go(this)"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>Plantilla</button>
+  <button data-tab="ref" data-title="Referència" onclick="go(this)"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></span>Referència</button>
 </nav>
 
 <div class="ov pit" id="pitchov"><div class="pitsheet">
@@ -430,7 +452,7 @@ async function persistLocal(){
 let _pushTimer=null;
 async function save(){
   state._ts=Date.now();
-  await persistLocal();
+  await persistLocal();pushSnapshot();
   if(syncEnabled()){clearTimeout(_pushTimer);_pushTimer=setTimeout(pushSync,800);}
 }
 /* ---------- cloud sync (Supabase) ---------- */
@@ -479,7 +501,9 @@ function openSync(){const c=syncCfg();
     try{localStorage.setItem('ht_sync_cfg',JSON.stringify(cfg));}catch(e){setSyncStatus('Aquest entorn no desa la config (fes-ho a la versió publicada)','err');}
     renderSyncBtn();
     if(cfg.on&&cfg.url&&cfg.key&&cfg.code)await pullSync();
-  });}
+  });
+  document.getElementById('sheet-body').insertAdjacentHTML('beforeend','<div class="bk-sec"><div class="bk-h">Còpia de seguretat</div><div class="bk-btns"><button class="mini gc" onclick="exportBackup()">Exporta</button><button class="mini" onclick="importBackup()">Importa</button><button class="mini" onclick="restoreSnapshot()">Restaura local</button></div><div class="bk-note">L\'app fa còpies locals automàtiques. Exporta un fitxer per guardar-les fora.</div></div>');
+}
 
 /* ---------- nav ---------- */
 function go(btn){
@@ -496,7 +520,7 @@ function go(btn){
 function esc(s){return (s||"").replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 function badgeClass(e){return e==='En curs'?'b-encurs':e==='Propera'?'b-propera':'b-passada';}
 
-function render(){renderSeasons();renderLinia();renderAvisosTab();renderSquad();renderRefs();}
+function render(){renderSeasons();renderLinia();renderAvisosTab();renderSquad();renderRefs();renderCurves();}
 
 function _sat(d){return new Date(d+'T12:00:00');}
 function _add(d,n){const x=new Date(d);x.setDate(x.getDate()+n);return x;}
@@ -879,14 +903,15 @@ function renderForms(){const lu=ensureLineups(curOwner())[pitMatch];
 async function setFormation(f){ensureLineups(curOwner())[pitMatch].formation=f;await save();renderForms();renderPitch();}
 function renderPitch(){const s=curOwner();const lu=ensureLineups(s)[pitMatch];const tt=seasonTrainCode(s);const slots=BOARD;let html=PITCH_SVG;
   slots.forEach(a=>{const sid=a[0],role=a[1],x=a[2],y=a[3];const d=lu.slots[sid];const pct=slotPct(role,tt);const cc=slotColorClass(pct,s.compete);
-    let cls='tok '+cc,inner=role,nm='',money=false,homep=false;
+    let cls='tok '+cc,inner=role,nm='',money=false,homep=false,pid='';
     if(d&&d.toSign){cls+=' sign';nm=(d.label||role)+' ⚑';}
-    else if(d&&d.playerId){const pl=state.players.find(pp=>pp.id===d.playerId);cls+=' filled';nm=pl?shortName(pl.nom):'?';money=!!(pl&&pl.rol==='caixa');homep=!!(pl&&pl.home);}
+    else if(d&&d.playerId){const pl=state.players.find(pp=>pp.id===d.playerId);cls+=' filled';nm=pl?shortName(pl.nom):'?';money=!!(pl&&pl.rol==='caixa');homep=!!(pl&&pl.home);pid=pl?pl.id:'';}
     else {cls+=' empty';}
     const badge=pct===100?'<span class="pb p100">100</span>':pct===50?'<span class="pb p50">50</span>':'';
     const coin=money?'<span class="coin sm coin-tok">$</span>':'';
     const heart=homep?'<span class="heart-tok">♥</span>':'';
-    html+=`<div class="${cls}" style="left:${x}%;top:${y}%" onclick="openSlot('${sid}','${role}')"><div class="circ">${inner}${badge}${coin}${heart}</div>${nm?`<div class="nm">${esc(nm)}</div>`:''}</div>`;});
+    const oc=pid?`openStats('${pid}','','now','${sid}','${role}')`:`openSlot('${sid}','${role}')`;
+    html+=`<div class="${cls}" style="left:${x}%;top:${y}%" onclick="${oc}"><div class="circ">${inner}${badge}${coin}${heart}</div>${nm?`<div class="nm">${esc(nm)}</div>`:''}</div>`;});
   document.getElementById('pitch-mini').innerHTML=html;renderPitSummary();}
 function renderPitSummary(){const s=curOwner();const tp=trainingPlan(s);
   const names=arr=>arr.map(e=>(e.home?'♥ ':'')+esc(e.name)+(e.caixa?' $':'')).join(', ');
@@ -1141,11 +1166,12 @@ function editNote(id){const x=id?state.timeline.find(i=>i.id===id):{kind:'note',
 
 /* ---------- training projection engine ---------- */
 const TRAIN_SKILL={gk:'por',def:'def',pm:'cre',wing:'ext',pass:'pas',sco:'ano',setp:'pa'};
-const SKILL_MULT={por:2.0,def:1.0,cre:1.0,ext:1.0,pas:1.0,ano:1.0,pa:2.5};
+const SKILL_MULT={por:0.78,def:1.25,cre:1.05,ext:0.72,pas:1.15,ano:1.00,pa:1.40};
 const SKILL_ORDER=['por','def','cre','ext','pas','ano','pa'];
 const SKILL_LAB={por:'Porteria',def:'Defensa',cre:'Creativitat',ext:'Extrem',pas:'Passades',ano:'Anotació',pa:'Pilota at.'};
 const LVLNAME=['inexistent','desastrós','horrible','pobre','dèbil','insuficient','acceptable','notable','excel·lent','formidable','destacat','brillant','magnífic','classe mundial','sobrenatural','titànic','extraterrestre','mític','màgic','utòpic','diví'];
-function baseWeeks(level){return 0.45*Math.pow(1.31,Math.max(0,level));}
+function baseWeeks(level){return 0.71*Math.pow(1.18,Math.max(0,level));}
+function ageMult(a){a=Math.max(17,a);return 1+0.05*(a-17)+0.02*Math.pow(Math.max(0,a-23),2);}
 function coachMult(){const c=state.coach||{};const tr=+c.trainer||5,a1=+c.a1||0,a2=+c.a2||0;const score=tr+0.4*(a1+a2);return (5+0.4*10)/Math.max(1,score);}
 function editCoach(){const c=state.coach||{trainer:5,a1:5,a2:5};openSheet('Personal · entrenador i assistents',[{k:'trainer',lab:'Entrenador (conos 1-5)',type:'number'},{k:'a1',lab:'Assistent 1 (conos 0-5)',type:'number'},{k:'a2',lab:'Assistent 2 (conos 0-5)',type:'number'}],{trainer:c.trainer,a1:c.a1,a2:c.a2},async(o)=>{state.coach={trainer:+o.trainer||5,a1:+o.a1||0,a2:+o.a2||0};await save();});}
 function parseAge(e){const m=(''+ (e||'')).match(/\d+/);return m?+m[0]:20;}
@@ -1159,7 +1185,7 @@ function projectPlayer(pl,throughISO){
     const wks=+ph.setmanes||0;const key=TRAIN_SKILL[ph.trainType];const rate=playerRateInPhase(pl,ph);
     for(let w=0;w<wks;w++){
       if(key&&rate>0&&sk[key]){
-        const ageNow=startAge+weeks/16;const af=1+0.04*Math.max(0,ageNow-17);const rf=rate===50?2:1;
+        const ageNow=startAge+weeks/16;const af=ageMult(ageNow);const rf=rate===50?2:1;
         const bw=baseWeeks(sk[key].lvl)*(SKILL_MULT[key]||1)*af*rf*coachMult();
         sk[key].prog+=1/bw;
         while(sk[key].prog>=1&&sk[key].lvl<20){sk[key].lvl++;sk[key].prog-=1;}
@@ -1170,29 +1196,60 @@ function projectPlayer(pl,throughISO){
   });
   return {sk,startAge,endAge:startAge+weeks/16,weeks};
 }
-function openProjection(id,throughISO){
+function openStats(id,throughISO,mode,sid,role){
+  mode=mode||'now';
   const pl=state.players.find(p=>p.id===id);if(!pl)return;
   const P=projectPlayer(pl,throughISO);
   const rows=SKILL_ORDER.map(k=>{
-    const s=P.sk[k];const start=+(pl[k]||0);const gain=s.lvl-start;
-    const fillW=Math.min(100,start/20*100);const gainW=Math.max(0,Math.min(100,(s.lvl+s.prog)/20*100)-fillW);
-    const plus=gain>0?('+'+gain):((s.prog>0.03&&s.lvl<20)?('+'+Math.round(s.prog*100)+'%'):'');
+    const cur=+(pl[k]||0);const s=P.sk[k];
+    const showLvl=(mode==='plan')?s.lvl:cur;
+    const fillW=Math.min(100,cur/20*100);
+    const gainW=(mode==='plan')?Math.max(0,Math.min(100,(s.lvl+s.prog)/20*100)-fillW):0;
+    const gain=(mode==='plan')?(s.lvl-cur):0;
+    const plus=(mode==='plan')?(gain>0?('+'+gain):((s.prog>0.03&&s.lvl<20)?('+'+Math.round(s.prog*100)+'%'):'')):'';
     return `<div class="pj-row"><span class="pj-lab">${SKILL_LAB[k]}</span>
       <div class="pj-bar"><div class="pj-fill" style="width:${fillW}%"></div><div class="pj-gain" style="left:${fillW}%;width:${gainW}%"></div></div>
-      <span class="pj-lname">${s.lvl>0?(LVLNAME[s.lvl]||''):'—'}</span><span class="pj-num">${s.lvl||'–'}</span><span class="pj-plus">${plus}</span></div>`;
+      <span class="pj-lname">${showLvl>0?(LVLNAME[showLvl]||''):'—'}</span><span class="pj-num">${showLvl||'–'}</span><span class="pj-plus">${plus}</span></div>`;
   }).join('');
   const trained=(state.timeline||[]).some(x=>x.kind==='train'&&playerRateInPhase(pl,x)>0);
-  document.getElementById('sheet-title').textContent='Projecció';
+  const ti=(throughISO||'').replace(/'/g,'');
+  const ex=sid?(",'"+sid+"','"+role+"'"):'';
+  document.getElementById('sheet-title').textContent='Estadístiques';
   document.getElementById('sheet-body').innerHTML=`
-    <div class="pj-hd">${pl.home?'<span class="heart">♥</span> ':''}${esc(pl.nom)}<span class="pj-age">${Math.floor(P.startAge)}a → ${Math.floor(P.endAge)}a · ${Math.round(P.weeks)} setm</span></div>
-    <div class="pj-tag">▲ projecció seguint el pla · en groc el que puja</div>
+    <div class="pj-hd">${pl.home?'<span class="heart">♥</span> ':''}${esc(pl.nom)}<span class="pj-age">${esc(pl.edat||'')}${pl.esp?' · '+esc(pl.esp):''}</span></div>
+    <div class="pj-toggle"><button class="${mode==='now'?'on':''}" onclick="openStats('${id}','${ti}','now'${ex})">Ara</button><button class="${mode==='plan'?'on':''}" onclick="openStats('${id}','${ti}','plan'${ex})">Amb el pla</button></div>
+    ${mode==='plan'?'<div class="pj-tag">▲ projecció seguint el pla · en groc el que puja</div>':''}
     ${rows}
-    ${trained?'':'<div class="pj-warn">Aquest jugador no està col·locat a cap fase d\'entrenament del pla. Posa\'l a l\'alineació d\'una fase per veure la projecció.</div>'}
-    <div class="pj-disc">Estimació (nivell + edat · entrenador ${(state.coach||{}).trainer||5} conos · assist. ${(state.coach||{}).a1||0}+${(state.coach||{}).a2||0}). Les skills mitjanes es projecten bé; les molt altes amb prou feines es mouen i l\'error creix a la distància.</div>`;
+    ${(mode==='plan'&&!trained)?'<div class="pj-warn">No està col·locat a cap fase; posa\'l a una alineació per veure la projecció.</div>':''}
+    ${sid?`<div class="tl-actions" style="margin-top:12px"><button class="mini gc" onclick="openSlot('${sid}','${role}')">✎ Canviar en aquesta posició</button></div>`:''}
+    <div class="pj-disc">${mode==='plan'?`Projecció (nivell + edat · entrenador ${(state.coach||{}).trainer||5} conos · assist. ${(state.coach||{}).a1||0}+${(state.coach||{}).a2||0}). Calibrada amb dades reals.`:'Estadístiques actuals. Toca "Amb el pla" per veure fins on arriben amb l\'entrenament.'}</div>`;
   sheetSave=null;
   var sv=document.querySelector('.sheet-actions .save');if(sv)sv.style.display='none';
   document.getElementById('ov').classList.add('on');
 }
+function openProjection(id,throughISO){openStats(id,throughISO,'plan');}
+/* ---------- training curves (Referència) ---------- */
+function renderCurves(){
+  const el=document.getElementById('curves');if(!el)return;
+  const skills=[['cre','Creativitat','#86c34a'],['def','Defensa','#46b4cf'],['por','Porteria','#e4ab3d'],['ext','Extrem','#ab7ecb']];
+  const L0=8,L1=20,W=300,H=170,maxY=28;
+  const xw=l=>(l-L0)/(L1-L0)*W, yw=w=>H-Math.min(1,w/maxY)*H;
+  let polys='';
+  skills.forEach(([k,,col])=>{const pts=[];for(let l=L0;l<=L1;l++){const w=baseWeeks(l)*(SKILL_MULT[k]||1);pts.push(xw(l).toFixed(1)+','+yw(w).toFixed(1));}polys+=`<polyline fill="none" stroke="${col}" stroke-width="2.5" points="${pts.join(' ')}"/>`;});
+  const legend=skills.map(([,nm,col])=>`<span class="lg"><span class="dot" style="background:${col}"></span>${nm}</span>`).join('');
+  el.innerHTML=`<div class="sec-head" style="margin-bottom:6px"><h2 style="font-size:16px">Corbes d'entrenament</h2></div>
+    <div class="curve-card"><div class="curve-legend">${legend}</div>
+      <div class="curve-wrap"><svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">${polys}</svg><span class="cy" style="top:0">${maxY}s</span><span class="cy" style="top:50%">${Math.round(maxY/2)}s</span><span class="cy" style="bottom:0">0</span></div>
+      <div class="curve-x"><span>nivell 8</span><span>14</span><span>20</span></div>
+      <div class="curve-note">Setmanes per pujar cada nivell (jugador jove, coaching màxim). Com més amunt, més lent d'entrenar. Calibrat amb les teves dades reals: Extrem i Porteria ràpides, Creativitat mitjana, Defensa la més lenta.</div></div>`;
+}
+
+/* ---------- refresh + backups ---------- */
+function hardRefresh(){var b=location.pathname.split('?')[0];location.href=b+'?v='+Date.now();}
+function exportBackup(){try{const data=JSON.stringify(state);const b=new Blob([data],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='ht-backup-'+new Date().toISOString().slice(0,10)+'.json';document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},1500);setSyncStatus('Còpia exportada ✓','ok');}catch(e){setSyncStatus('Error exportant','err');}}
+function importBackup(){const inp=document.createElement('input');inp.type='file';inp.accept='application/json,.json';inp.onchange=e=>{const f=e.target.files&&e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{let obj;try{obj=JSON.parse(r.result);}catch(err){setSyncStatus('Fitxer no vàlid','err');return;}if(!obj||!obj.seasons&&!obj.players){setSyncStatus('El fitxer no sembla una còpia','err');return;}confirmSheet('Substituir TOTES les dades per la còpia importada?',async()=>{state=obj;state.timeline=state.timeline||[];await save();render();setSyncStatus('Còpia importada ✓','ok');});};r.readAsText(f);};inp.click();}
+function pushSnapshot(){try{const now=Date.now();const last=+(localStorage.getItem('ht_snap_t')||0);if(now-last<5*60000)return;localStorage.setItem('ht_snap_t',''+now);let arr=[];try{arr=JSON.parse(localStorage.getItem('ht_snapshots')||'[]');}catch(e){}arr.push({t:now,data:JSON.stringify(state)});if(arr.length>4)arr=arr.slice(-4);localStorage.setItem('ht_snapshots',JSON.stringify(arr));}catch(e){}}
+function restoreSnapshot(){let arr=[];try{arr=JSON.parse(localStorage.getItem('ht_snapshots')||'[]');}catch(e){}if(!arr.length){setSyncStatus('Encara no hi ha còpies locals','err');return;}const last=arr[arr.length-1];confirmSheet("Restaurar la còpia local del "+new Date(last.t).toLocaleString('ca')+'?',async()=>{try{state=JSON.parse(last.data);state.timeline=state.timeline||[];await save();render();setSyncStatus('Còpia local restaurada ✓','ok');}catch(e){setSyncStatus('Error restaurant','err');}});}
 /* ---------- boot ---------- */
 (async()=>{await load();state.timeline=state.timeline||[];if(!state.coach||state.coach.a1===undefined)state.coach={trainer:5,a1:5,a2:5};if(autofillSeasonChain())await save();render();renderSyncBtn();if(syncEnabled())pullSync();})();
 window.addEventListener('focus',()=>{if(syncEnabled())pullSync();});
