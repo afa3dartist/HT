@@ -309,6 +309,7 @@
   .bk-h{font-family:"Oswald";font-weight:600;font-size:13px;margin-bottom:8px}
   .bk-btns{display:flex;gap:8px;flex-wrap:wrap}
   .bk-note{font-size:10.5px;color:var(--dim);margin-top:8px;line-height:1.4}
+  .auto-tag{font-family:"Oswald";font-size:9px;color:var(--dim);border:1px solid var(--brd);border-radius:5px;padding:1px 5px}
 </style>
 </head>
 <body>
@@ -861,6 +862,8 @@ const TRAIN={
   setp:{gk:100,cd:100,wb:100,im:100,w:100,fw:100}
 };
 const TRAIN_LABEL={gk:'Porteria',def:'Defensa',pm:'Creativitat',wing:'Extrem',pass:'Passades',sco:'Anotació',setp:'Pilota aturada'};
+const POS_NAME={EE:'Extrem',ED:'Extrem',MI:'Mig',DC:'Central',LE:'Lateral',LD:'Lateral',CAR:'Lateral',DAV:'Davanter',POR:'Porter'};
+const POS_SKILL={EE:'ext',ED:'ext',MI:'cre',DC:'def',LE:'def',LD:'def',CAR:'def',DAV:'ano',POR:'por'};
 function roleGroup(role){
   if(role==='POR')return 'gk';
   if(role==='DC')return 'cd';
@@ -923,7 +926,7 @@ function renderPitSummary(){const s=curOwner();const tp=trainingPlan(s);
 function trainingPlan(s){const lus=ensureLineups(s);const tt=seasonTrainCode(s);const full=new Map(),half=new Map(),sign=[];
   ['lliga','copa'].forEach(k=>{const lu=lus[k];const slots=BOARD;
     slots.forEach(a=>{const sid=a[0],role=a[1];const d=lu.slots[sid];if(!d)return;const pct=slotPct(role,tt);
-      if(d.toSign){if(pct>0)sign.push({label:d.label||role,pct});return;}
+      if(d.toSign){const e={sign:true,name:d.label||role};if(pct===100)full.set('s_'+k+'_'+sid,e);else if(pct===50)half.set('s_'+k+'_'+sid,e);return;}
       const pl=state.players.find(p=>p.id===d.playerId);if(!pl)return;
       const entry={id:pl.id,name:pl.nom,caixa:pl.rol==='caixa',home:!!pl.home};
       if(pct===100)full.set(pl.id,entry);else if(pct===50)half.set(pl.id,entry);});});
@@ -931,10 +934,22 @@ function trainingPlan(s){const lus=ensureLineups(s);const tt=seasonTrainCode(s);
   return {full:[...full.values()],half:[...half.values()],sign};}
 function trainPlanHTML(s,seasonId){const tp=trainingPlan(s);
   if(!tp.full.length&&!tp.half.length)return '';
-  const pchip=(base,e)=>`<span class="tpc ${base} tpc-click" onclick="openProjection('${e.id}','${seasonId||''}')">${e.home?'<span class="heart sm">♥</span>':''}${e.caixa?'<span class="coin sm">$</span>':''}${esc(e.name)} <span class="tpc-go">📈</span></span>`;
+  const pchip=(base,e)=>e.sign?`<span class="tpc k">${esc(e.name)} ⚑</span>`:`<span class="tpc ${base} tpc-click" onclick="openProjection('${e.id}','${seasonId||''}')">${e.home?'<span class="heart sm">♥</span>':''}${e.caixa?'<span class="coin sm">$</span>':''}${esc(e.name)} <span class="tpc-go">📈</span></span>`;
   const col=(title,base,cls,arr)=>`<div class="tp-col ${cls}"><div class="tp-h">${title}</div><div class="tp-chips">${arr.length?arr.map(e=>pchip(base,e)).join(''):'<span class="tp-none">—</span>'}</div></div>`;
   const cols=(tp.full.length||tp.half.length)?`<div class="tp-cols">${col('100%','g','c100',tp.full)}${col('50%','b','c50',tp.half)}</div>`:'';
-  return `<div class="field"><div class="lab">Entrenem (${tp.full.length+tp.half.length})</div>${cols}</div>`;}
+  const nReal=tp.full.filter(e=>!e.sign).length+tp.half.filter(e=>!e.sign).length;
+  return `<div class="field"><div class="lab">Entrenem (${nReal})</div>${cols}</div>`;}
+function addSignBrief(ph,sid,role,match){
+  if((state.timeline||[]).some(x=>x.kind==='buy'&&x.srcPhase===ph.id&&x.srcSlot===sid&&x.srcMatch===match))return;
+  const skKey=POS_SKILL[role]||'def';let vals=[];
+  ['lliga','copa'].forEach(k=>{const lu=ph.lineups&&ph.lineups[k];if(!lu)return;BOARD.forEach(a=>{if(a[1]===role){const dd=lu.slots[a[0]];if(dd&&dd.playerId){const pl=state.players.find(p=>p.id===dd.playerId);if(pl&&+pl[skKey])vals.push(+pl[skKey]);}}});});
+  const lvl=vals.length?Math.round(vals.reduce((s,v)=>s+v,0)/vals.length):8;
+  const lo=Math.max(1,lvl-1),hi=Math.min(20,lvl+1);
+  const skLab=(SKILL_LAB[skKey]||'Habilitat');const trained=TRAIN_LABEL[ph.trainType]||'';
+  const reqs=[skLab+' '+lo+'–'+hi];if(role==='LE'||role==='LD'||role==='CAR')reqs.push('Extrem 5+');reqs.push('Edat < 23');
+  state.timeline.push({id:uid(),kind:'buy',pos:(POS_NAME[role]||role),reqsText:reqs.join('\n'),entrenarem:trained,motiu:'Reforç · fase '+trained,budgetMax:0,date:ph.date,alert:0,srcPhase:ph.id,srcSlot:sid,srcMatch:match});
+}
+function removeSignBrief(phId,sid,match){state.timeline=(state.timeline||[]).filter(x=>!(x.kind==='buy'&&x.srcPhase===phId&&x.srcSlot===sid&&x.srcMatch===match));}
 function openSlot(sid,role){const lu=ensureLineups(curOwner())[pitMatch];const d=lu.slots[sid]||{};
   const squadOpts=state.players.slice().sort((a,b)=>(b.tsi||0)-(a.tsi||0)).map(p=>[p.id,p.nom]);
   const cur=d.toSign?'__sign':(d.playerId||'');
@@ -942,10 +957,11 @@ function openSlot(sid,role){const lu=ensureLineups(curOwner())[pitMatch];const d
     {k:'player',lab:'Jugador',type:'select',opts:[['','— buida'],...squadOpts,['__sign','➕ A fitxar (negre)']]},
     {k:'label',lab:'Etiqueta (si és a fitxar, ex. DC)'}
   ],{player:cur,label:(d.label||role)},async(out)=>{
-    if(out.player==='')delete lu.slots[sid];
-    else if(out.player==='__sign')lu.slots[sid]={toSign:true,label:out.label||role};
-    else {Object.keys(lu.slots).forEach(k=>{if(k!==sid&&lu.slots[k]&&lu.slots[k].playerId===out.player)delete lu.slots[k];});lu.slots[sid]={playerId:out.player};}
-    await save();renderPitch();});}
+    const ph=(pitKind==='phase')?curOwner():null;
+    if(out.player===''){delete lu.slots[sid];if(ph)removeSignBrief(ph.id,sid,pitMatch);}
+    else if(out.player==='__sign'){lu.slots[sid]={toSign:true,label:out.label||role};if(ph)addSignBrief(ph,sid,role,pitMatch);}
+    else {Object.keys(lu.slots).forEach(k=>{if(k!==sid&&lu.slots[k]&&lu.slots[k].playerId===out.player)delete lu.slots[k];});lu.slots[sid]={playerId:out.player};if(ph)removeSignBrief(ph.id,sid,pitMatch);}
+    await save();renderPitch();renderLinia();});}
 document.getElementById('pitchov').addEventListener('click',e=>{if(e.target.id==='pitchov')closePitch();});
 
 /* ---------- timeline (Línia) ---------- */
@@ -1034,7 +1050,7 @@ function phaseCardHTML(x,seasonId){
 function tradeCardHTML(x){
   if(x.kind==='sale')return `<div class="lp-trade sell"><div class="lp-ph-h"><span class="n">💰 ${x.playerId?playerLabel(x.playerId):esc(x.title||'Venda')}</span><span class="d">${tlDate(x.date)}</span></div><div class="tl-range" style="margin-top:6px">${fmtEur(x.priceMin)} – ${fmtEur(x.priceMax)}</div><div class="tl-actions"><button class="mini" onclick="editTimeline('${x.id}')">✎</button><button class="mini del" onclick="delTimeline('${x.id}')">✕</button> ${bellHTML(x)}</div></div>`;
   const reqs=(x.reqsText||'').split('\n').map(s=>s.trim()).filter(Boolean);
-  return `<div class="lp-trade buy"><div class="lp-ph-h"><span class="n">➕ Fitxar <span class="tl-poschip">${esc(x.pos||'?')}</span></span><span class="d">${tlDate(x.date)}</span></div>${reqs.length?`<div class="tl-reqs" style="margin-top:8px">${reqs.map(r=>`<span class="tl-req">${esc(r)}</span>`).join('')}</div>`:''}${x.entrenarem?`<div class="lp-mini">Hi entrenarem: <b>${esc(x.entrenarem)}</b></div>`:''}${x.budgetMax?`<div class="lp-mini">Màxim: <b style="color:#f2cf7a">${fmtEur(x.budgetMax)}</b></div>`:''}<div class="tl-actions"><button class="mini" onclick="editTimeline('${x.id}')">✎</button><button class="mini del" onclick="delTimeline('${x.id}')">✕</button> ${bellHTML(x)}</div></div>`;
+  return `<div class="lp-trade buy"><div class="lp-ph-h"><span class="n">➕ Fitxar <span class="tl-poschip">${esc(x.pos||'?')}</span>${x.srcPhase?' <span class="auto-tag">auto</span>':''}</span><span class="d">${tlDate(x.date)}</span></div>${reqs.length?`<div class="tl-reqs" style="margin-top:8px">${reqs.map(r=>`<span class="tl-req">${esc(r)}</span>`).join('')}</div>`:''}${x.entrenarem?`<div class="lp-mini">Hi entrenarem: <b>${esc(x.entrenarem)}</b></div>`:''}${x.budgetMax?`<div class="lp-mini">Màxim: <b style="color:#f2cf7a">${fmtEur(x.budgetMax)}</b></div>`:''}<div class="tl-actions"><button class="mini" onclick="editTimeline('${x.id}')">✎</button><button class="mini del" onclick="delTimeline('${x.id}')">✕</button> ${bellHTML(x)}</div></div>`;
 }
 function noteCardHTML(x){return `<div class="lp-note"><div class="lp-ph-h"><span class="n">📝 Nota</span><span class="d">${tlDate(x.date)}</span></div><div style="font-size:12.5px;margin-top:4px">${esc(x.text||'')}</div><div class="tl-actions"><button class="mini" onclick="editTimeline('${x.id}')">✎</button><button class="mini del" onclick="delTimeline('${x.id}')">✕</button> ${bellHTML(x)}</div></div>`;}
 function renderLinia(){
