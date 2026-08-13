@@ -930,12 +930,11 @@ function trainingPlan(s){const lus=ensureLineups(s);const tt=seasonTrainCode(s);
   half.forEach((v,k)=>{if(full.has(k))half.delete(k);});
   return {full:[...full.values()],half:[...half.values()],sign};}
 function trainPlanHTML(s,seasonId){const tp=trainingPlan(s);
-  if(!tp.full.length&&!tp.half.length&&!tp.sign.length)return '';
+  if(!tp.full.length&&!tp.half.length)return '';
   const pchip=(base,e)=>`<span class="tpc ${base} tpc-click" onclick="openProjection('${e.id}','${seasonId||''}')">${e.home?'<span class="heart sm">♥</span>':''}${e.caixa?'<span class="coin sm">$</span>':''}${esc(e.name)} <span class="tpc-go">📈</span></span>`;
   const col=(title,base,cls,arr)=>`<div class="tp-col ${cls}"><div class="tp-h">${title}</div><div class="tp-chips">${arr.length?arr.map(e=>pchip(base,e)).join(''):'<span class="tp-none">—</span>'}</div></div>`;
   const cols=(tp.full.length||tp.half.length)?`<div class="tp-cols">${col('100%','g','c100',tp.full)}${col('50%','b','c50',tp.half)}</div>`:'';
-  const signHTML=tp.sign.length?`<div class="tp-h" style="margin-top:8px">A fitxar</div><div class="tp-chips">${tp.sign.map(x=>`<span class="tpc k">${esc(x.label)} ⚑</span>`).join('')}</div>`:'';
-  return `<div class="field"><div class="lab">Entrenem (${tp.full.length+tp.half.length})</div>${cols}${signHTML}</div>`;}
+  return `<div class="field"><div class="lab">Entrenem (${tp.full.length+tp.half.length})</div>${cols}</div>`;}
 function openSlot(sid,role){const lu=ensureLineups(curOwner())[pitMatch];const d=lu.slots[sid]||{};
   const squadOpts=state.players.slice().sort((a,b)=>(b.tsi||0)-(a.tsi||0)).map(p=>[p.id,p.nom]);
   const cur=d.toSign?'__sign':(d.playerId||'');
