@@ -310,6 +310,9 @@
   .bk-btns{display:flex;gap:8px;flex-wrap:wrap}
   .bk-note{font-size:10.5px;color:var(--dim);margin-top:8px;line-height:1.4}
   .auto-tag{font-family:"Oswald";font-size:9px;color:var(--dim);border:1px solid var(--brd);border-radius:5px;padding:1px 5px}
+  .wk-big{font-family:"Oswald";font-weight:600;font-size:14px;color:#dfeee6}
+  .jorn{font-family:"Oswald";font-weight:600;font-size:12px;color:#cfeba8}
+  .lp-ph-h .d{text-align:right;line-height:1.35}
 </style>
 </head>
 <body>
@@ -1045,14 +1048,26 @@ function nextSeason(){if(liniaIdx<ordSeasons().length-1)goSeason(liniaIdx+1);}
 function phaseCardHTML(x,seasonId){
   const col={def:'#86c34a',pm:'#46b4cf',wing:'#ab7ecb',pass:'#46b4cf',sco:'#e0555c',gk:'#e4ab3d',setp:'#86c34a'}[x.trainType]||'#86c34a';
   const end=x.date?_fmt(_add(_sat(x.date),(+x.setmanes||0)*7)):'';
-  return `<div class="lp-phase" style="border-left-color:${col}"><div class="lp-ph-h"><span class="n"><span class="cone"><i></i></span> ${TRAIN_LABEL[x.trainType]||'Entrenament'}</span><span class="d">${x.setmanes||'?'} setm${x.date?' · fins '+end:''}</span></div>${trainPlanHTML(x,seasonId)}<div class="tl-actions"><button class="mini gc" onclick="openPhasePitch('${x.id}')">⚽ Alineació</button><button class="mini" onclick="editTimeline('${x.id}')">✎</button><button class="mini del" onclick="delTimeline('${x.id}')">✕</button> ${bellHTML(x)}</div></div>`;
+  let jorn='';const _s=seasonId?state.seasons.find(z=>z.id===seasonId):null;const _R=_s?seaRange(_s):null;
+  if(_R&&x.date){const sw=Math.max(1,Math.round((new Date(x.date+'T12:00:00')-_R.start)/6048e5)+1);const ew=sw+(+x.setmanes||0)-1;jorn='J'+sw+' → J'+ew;}
+  return `<div class="lp-phase" style="border-left-color:${col}"><div class="lp-ph-h"><span class="n"><span class="cone"><i></i></span> ${TRAIN_LABEL[x.trainType]||'Entrenament'} <span class="wk-big">· ${x.setmanes||'?'} setmanes</span></span><span class="d">${jorn?`<span class="jorn">${jorn}</span><br>`:''}${x.date?'fins '+end:''}</span></div>${trainPlanHTML(x,seasonId)}<div class="tl-actions"><button class="mini" onclick="reorderItem('${x.id}',-1)">↑</button><button class="mini" onclick="reorderItem('${x.id}',1)">↓</button><button class="mini gc" onclick="openPhasePitch('${x.id}')">⚽ Alineació</button><button class="mini" onclick="editTimeline('${x.id}')">✎</button><button class="mini del" onclick="delTimeline('${x.id}')">✕</button> ${bellHTML(x)}</div></div>`;
 }
 function tradeCardHTML(x){
-  if(x.kind==='sale')return `<div class="lp-trade sell"><div class="lp-ph-h"><span class="n">💰 ${x.playerId?playerLabel(x.playerId):esc(x.title||'Venda')}</span><span class="d">${tlDate(x.date)}</span></div><div class="tl-range" style="margin-top:6px">${fmtEur(x.priceMin)} – ${fmtEur(x.priceMax)}</div><div class="tl-actions"><button class="mini" onclick="editTimeline('${x.id}')">✎</button><button class="mini del" onclick="delTimeline('${x.id}')">✕</button> ${bellHTML(x)}</div></div>`;
+  if(x.kind==='sale')return `<div class="lp-trade sell"><div class="lp-ph-h"><span class="n">💰 ${x.playerId?playerLabel(x.playerId):esc(x.title||'Venda')}</span><span class="d">${tlDate(x.date)}</span></div><div class="tl-range" style="margin-top:6px">${fmtEur(x.priceMin)} – ${fmtEur(x.priceMax)}</div><div class="tl-actions"><button class="mini" onclick="reorderItem('${x.id}',-1)">↑</button><button class="mini" onclick="reorderItem('${x.id}',1)">↓</button><button class="mini" onclick="editTimeline('${x.id}')">✎</button><button class="mini del" onclick="delTimeline('${x.id}')">✕</button> ${bellHTML(x)}</div></div>`;
   const reqs=(x.reqsText||'').split('\n').map(s=>s.trim()).filter(Boolean);
-  return `<div class="lp-trade buy"><div class="lp-ph-h"><span class="n">➕ Fitxar <span class="tl-poschip">${esc(x.pos||'?')}</span>${x.srcPhase?' <span class="auto-tag">auto</span>':''}</span><span class="d">${tlDate(x.date)}</span></div>${reqs.length?`<div class="tl-reqs" style="margin-top:8px">${reqs.map(r=>`<span class="tl-req">${esc(r)}</span>`).join('')}</div>`:''}${x.entrenarem?`<div class="lp-mini">Hi entrenarem: <b>${esc(x.entrenarem)}</b></div>`:''}${x.budgetMax?`<div class="lp-mini">Màxim: <b style="color:#f2cf7a">${fmtEur(x.budgetMax)}</b></div>`:''}<div class="tl-actions"><button class="mini" onclick="editTimeline('${x.id}')">✎</button><button class="mini del" onclick="delTimeline('${x.id}')">✕</button> ${bellHTML(x)}</div></div>`;
+  return `<div class="lp-trade buy"><div class="lp-ph-h"><span class="n">➕ Fitxar <span class="tl-poschip">${esc(x.pos||'?')}</span>${x.srcPhase?' <span class="auto-tag">auto</span>':''}</span><span class="d">${tlDate(x.date)}</span></div>${reqs.length?`<div class="tl-reqs" style="margin-top:8px">${reqs.map(r=>`<span class="tl-req">${esc(r)}</span>`).join('')}</div>`:''}${x.entrenarem?`<div class="lp-mini">Hi entrenarem: <b>${esc(x.entrenarem)}</b></div>`:''}${x.budgetMax?`<div class="lp-mini">Màxim: <b style="color:#f2cf7a">${fmtEur(x.budgetMax)}</b></div>`:''}<div class="tl-actions"><button class="mini" onclick="reorderItem('${x.id}',-1)">↑</button><button class="mini" onclick="reorderItem('${x.id}',1)">↓</button><button class="mini" onclick="editTimeline('${x.id}')">✎</button><button class="mini del" onclick="delTimeline('${x.id}')">✕</button> ${bellHTML(x)}</div></div>`;
 }
-function noteCardHTML(x){return `<div class="lp-note"><div class="lp-ph-h"><span class="n">📝 Nota</span><span class="d">${tlDate(x.date)}</span></div><div style="font-size:12.5px;margin-top:4px">${esc(x.text||'')}</div><div class="tl-actions"><button class="mini" onclick="editTimeline('${x.id}')">✎</button><button class="mini del" onclick="delTimeline('${x.id}')">✕</button> ${bellHTML(x)}</div></div>`;}
+function noteCardHTML(x){return `<div class="lp-note"><div class="lp-ph-h"><span class="n">📝 Nota</span><span class="d">${tlDate(x.date)}</span></div><div style="font-size:12.5px;margin-top:4px">${esc(x.text||'')}</div><div class="tl-actions"><button class="mini" onclick="reorderItem('${x.id}',-1)">↑</button><button class="mini" onclick="reorderItem('${x.id}',1)">↓</button><button class="mini" onclick="editTimeline('${x.id}')">✎</button><button class="mini del" onclick="delTimeline('${x.id}')">✕</button> ${bellHTML(x)}</div></div>`;}
+function tlByOrd(a,b){return ((a.ord==null?1e9:a.ord)-(b.ord==null?1e9:b.ord))||(a.date||'').localeCompare(b.date||'');}
+function reorderItem(id,dir){
+  const it=(state.timeline||[]).find(x=>x.id===id);if(!it)return;
+  const seasons=ordSeasons();const si=itemSeaIdx(it,seasons);
+  const peers=(state.timeline||[]).filter(x=>itemSeaIdx(x,seasons)===si).sort(tlByOrd);
+  peers.forEach((x,i)=>{x.ord=i;});
+  const idx=peers.findIndex(x=>x.id===id);const j=idx+dir;if(j<0||j>=peers.length)return;
+  const t=peers[idx].ord;peers[idx].ord=peers[j].ord;peers[j].ord=t;
+  save();renderLinia();
+}
 function renderLinia(){
   const el=document.getElementById('linia');if(!el)return;
   const seasons=ordSeasons();
@@ -1063,10 +1078,7 @@ function renderLinia(){
   const L=(s.dataJornada&&s.jornada)?seasonLive(s):null;
   const jl=L?(L.phase==='live'?'Jornada '+L.jornada+'/14 · en curs':L.phase==='upcoming'?'pendent':L.phase==='off'?'off-season':'acabada'):(s.estat||'');
   const items=(state.timeline||[]);const mine=items.filter(x=>itemSeaIdx(x,seasons)===liniaIdx);
-  const byd=(a,b)=>(a.date||'').localeCompare(b.date||'');
-  const trains=mine.filter(x=>x.kind==='train').sort(byd);
-  const trades=mine.filter(x=>x.kind==='sale'||x.kind==='buy').sort(byd);
-  const notes=mine.filter(x=>x.kind==='note').sort(byd);
+  const ordered=mine.slice().sort(tlByOrd);
   const dots=seasons.map((_,i)=>`<i class="${i===liniaIdx?'on':''}" onclick="goSeason(${i})"></i>`).join('');
   const isLast=liniaIdx===seasons.length-1;
   el.innerHTML=`
@@ -1076,9 +1088,7 @@ function renderLinia(){
     <div class="lp-dots">${dots}</div>
     <div class="lp-card">
       ${s.competicio?`<div class="lp-obj">🏆 ${esc(s.competicio)}</div>`:''}
-      <div class="lp-lab">Entrenament</div>${trains.length?trains.map(function(x){return phaseCardHTML(x,s.id);}).join(''):'<div class="lp-empty">Cap fase d\'entrenament.</div>'}
-      <div class="lp-lab">Traspassos</div>${trades.length?trades.map(tradeCardHTML).join(''):'<div class="lp-empty">Cap venda ni fitxatge.</div>'}
-      <div class="lp-lab">Notes</div>${notes.length?notes.map(noteCardHTML).join(''):'<div class="lp-empty">Cap nota.</div>'}
+      ${ordered.length?ordered.map(function(x){return x.kind==='train'?phaseCardHTML(x,s.id):(x.kind==='note'?noteCardHTML(x):tradeCardHTML(x));}).join(''):'<div class="lp-empty">Cap element. Afegeix-ne amb + Element.</div>'}
       <div class="lp-actions"><button class="mini seaedit" onclick="editSeason('${s.id}')">✎ Edita temporada</button><button class="mini del" onclick="delSeasonTL('${s.id}')">Elimina</button></div>
     </div>
     ${isLast?`<button class="tl-add" style="border-color:rgba(228,171,61,.5);color:#e4ab3d" onclick="defineNextSeason()">＋ Definir següent temporada</button>`:''}`;
