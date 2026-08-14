@@ -319,6 +319,10 @@
   .esp-opt{display:flex;align-items:center;gap:8px;padding:9px 10px;border:1px solid var(--brd);border-radius:9px;background:var(--panel2);color:var(--ink);font-family:"Oswald";font-weight:600;font-size:12px;cursor:pointer;text-align:left}
   .esp-opt svg{width:18px;height:18px;flex:none}
   .esp-opt.on{border-color:color-mix(in srgb,var(--acc) 55%,transparent);background:color-mix(in srgb,var(--acc) 15%,transparent);color:var(--acc)}
+  .pj-esp{display:inline-flex;align-items:center;gap:6px;margin:-2px 0 12px;font-family:"Oswald";font-weight:600;font-size:12.5px;color:#cfe3d6;border:1px solid var(--brd);border-radius:20px;padding:3px 10px}
+  .pj-esp svg{width:15px;height:15px}
+  .pj-wage{margin-top:12px;font-size:12px;color:var(--dim)}
+  .pj-wage b{color:#f2cf7a;font-family:"Oswald"}
 </style>
 </head>
 <body>
@@ -756,6 +760,18 @@ const ESP_LIST=[
  ['Resilient','Resilient','<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l2.5 6 4-13 2.5 7H21"/></svg>'],
  ['Joc en equip','Joc en equip','<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="6" cy="6" r="2.2"/><circle cx="18" cy="6" r="2.2"/><circle cx="12" cy="18" r="2.2"/><path d="M8 6.6h8M7.4 8l3.5 8M16.6 8l-3.5 8"/></svg>']
 ];
+function espIcon(v){const e=ESP_LIST.find(x=>x[0]===v);return e?e[2]:'';}
+function approxWage(pl){
+  const keys=['por','def','cre','ext','pas','ano','pa'];
+  const comp=l=>{l=+l||0;return l<=0?0:34*Math.pow(1.5,l);};
+  const vals=keys.map(k=>comp(pl[k])*(k==='por'?1.5:1)).sort((a,b)=>b-a);
+  const primary=vals[0]||0;const secondary=vals.slice(1).reduce((s,v)=>s+v,0);
+  const rate=primary<20000?0.5:0.4;
+  let w=250+primary+secondary*rate;
+  const age=parseAge(pl.edat);if(age>=29)w*=Math.max(0.5,1-0.08*(age-28));
+  if(pl.estranger)w*=1.2;
+  return Math.round(w);
+}
 function pickEsp(inputId,btn){document.getElementById(inputId).value=btn.dataset.v;btn.parentElement.querySelectorAll('.esp-opt').forEach(b=>b.classList.remove('on'));btn.classList.add('on');}
 function openSheet(title,fields,obj,onSave){
   var _sv=document.querySelector('.sheet-actions .save'); if(_sv){_sv.style.display='';_sv.textContent='Desa';}
@@ -842,6 +858,7 @@ function editPlanned(id,placeCtx){
     {k:'pos',lab:'Posició',type:'select',opts:POS_OPTS},
     {k:'edat',lab:'Edat (ex. 20a)'},
     {k:'esp',lab:'Especialitat',type:'espsel'},
+    {k:'estranger',lab:'Estranger · juga fora del seu país (+20% sou)',type:'select',opts:[['','No (nacional)'],['1','Sí (estranger)']]},
     {k:'ext',lab:'Extrem',type:'select',opts:skillOpts()},{k:'cre',lab:'Creativitat',type:'select',opts:skillOpts()},{k:'def',lab:'Defensa',type:'select',opts:skillOpts()},
     {k:'pas',lab:'Passades',type:'select',opts:skillOpts()},{k:'ano',lab:'Anotació',type:'select',opts:skillOpts()},{k:'pa',lab:'Pilota aturada',type:'select',opts:skillOpts()},{k:'por',lab:'Porteria',type:'select',opts:skillOpts()}
   ],{nom:o.nom||'',pos:o.pos||'Lateral',edat:o.edat||'',esp:o.esp||'',ext:o.ext||'',cre:o.cre||'',def:o.def||'',pas:o.pas||'',ano:o.ano||'',pa:o.pa||'',por:o.por||''},async(out)=>{
@@ -863,6 +880,7 @@ function editPlayer(id){
     {k:'aniversari',lab:'Proper aniversari'},
     {k:'tsi',lab:'TSI',type:'number'},
     {k:'esp',lab:'Especialitat',type:'espsel'},
+    {k:'estranger',lab:'Estranger · juga fora del seu país (+20% sou)',type:'select',opts:[['','No (nacional)'],['1','Sí (estranger)']]},
     {k:'ext',lab:'Extrem',type:'select',opts:skillOpts()},
     {k:'cre',lab:'Creativitat',type:'select',opts:skillOpts()},
     {k:'def',lab:'Defensa',type:'select',opts:skillOpts()},
@@ -1324,12 +1342,14 @@ function openStats(id,seasonId,mode,sid,role){
   const ageStr=(mode==='plan'&&R)?ageAtISO(pl.edat,planEnd):(pl.edat||'');
   document.getElementById('sheet-title').textContent='Estadístiques';
   document.getElementById('sheet-body').innerHTML=`
-    <div class="pj-hd">${pl.home?'<span class="heart">♥</span> ':''}${esc(pl.nom)}${pl.planned?' <span class="tagp">a fitxar</span>':''}<span class="pj-age">${esc(ageStr)}${(pl.esp&&pl.esp!=='—')?' · '+esc(pl.esp):''}</span></div>
+    <div class="pj-hd">${pl.home?'<span class="heart">♥</span> ':''}${esc(pl.nom)}${pl.planned?' <span class="tagp">a fitxar</span>':''}<span class="pj-age">${esc(ageStr)}</span></div>
+    ${(pl.esp&&pl.esp!=='—'&&pl.esp!=='')?`<div class="pj-esp">${espIcon(pl.esp)}<span>${esc(pl.esp)}</span></div>`:''}
     <div class="pj-toggle"><button class="${mode==='now'?'on':''}" onclick="openStats('${id}','${sc}','now'${ex})">Ara</button><button class="${mode==='plan'?'on':''}" onclick="openStats('${id}','${sc}','plan'${ex})">Projecció</button></div>
     ${mode==='plan'?`<div class="pj-tag"><span style="color:#5a9a34">verd</span> = assolit (temporades anteriors) · <span style="color:#e4ab3d">groc</span> = puja a ${s?('T'+s.temporada):'aquesta temporada'}</div>`:''}
     ${rows}
     ${(mode==='plan'&&!trained)?'<div class="pj-warn">No entrena en aquesta temporada; posa\'l a l\'alineació d\'una fase per veure el que puja.</div>':''}
     <div class="tl-actions" style="margin-top:12px"><button class="mini" onclick="${pl.planned?`editPlanned('${id}')`:`editPlayer('${id}')`}">✎ Edita jugador</button>${sid?`<button class="mini gc" onclick="openSlot('${sid}','${role}')">Canviar posició</button>`:''}</div>
+    <div class="pj-wage">Sou aprox: <b>${fmtEur(approxWage(pl))}</b> / setmana ${pl.estranger?'· estranger':'· nacional'}</div>
     <div class="pj-disc">${mode==='plan'?`Estimació (nivell + edat). El verd assumeix fet l'entrenament de les temporades anteriors.`:'Estadístiques actuals (avui).'}</div>`;
   sheetSave=null;
   var sv=document.querySelector('.sheet-actions .save');if(sv)sv.style.display='none';
