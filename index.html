@@ -999,13 +999,13 @@ function itemHTML(x){
       <div class="tl-actions"><button class="mini gc" onclick="openPhasePitch('${x.id}')">⚽ Alineació</button><button class="mini" onclick="editTimeline('${x.id}')">✎</button><button class="mini del" onclick="delTimeline('${x.id}')">✕</button> ${bellHTML(x)}</div></div>`;
   }
   if(x.kind==='sale'){
-    return `<div class="tl-item" style="border-left-color:#f6cf5c"><div class="tl-h"><span class="n">💰 ${x.playerId?playerLabel(x.playerId):esc(x.title||'Venda')}</span><span class="d">${tlDate(x.date)}</span></div>
+    return `<div class="tl-item" style="border-left-color:#f6cf5c"><div class="tl-h"><span class="n">💰 ${x.playerId?playerLabel(x.playerId):esc(x.title||'Venda')}</span><span class="d">${jornDateHTML(x.date,seasonId)}</span></div>
       <div class="tl-body"><div class="tl-lab">Forquilla de venda</div><span class="tl-range">${fmtEur(x.priceMin)} – ${fmtEur(x.priceMax)}</span></div>
       <div class="tl-actions">${tlActions(x).replace('<div class="tl-actions">','').replace('</div>','')} ${bellHTML(x)}</div></div>`;
   }
   if(x.kind==='buy'){
     const reqs=(x.reqsText||'').split('\n').map(s=>s.trim()).filter(Boolean);
-    return `<div class="tl-item" style="border-left-color:#86c34a"><div class="tl-h"><span class="n">➕ Fitxar <span class="tl-poschip">${esc(x.pos||'?')}</span></span><span class="d">${tlDate(x.date)}</span></div>
+    return `<div class="tl-item" style="border-left-color:#86c34a"><div class="tl-h"><span class="n">➕ Fitxar <span class="tl-poschip">${esc(x.pos||'?')}</span></span><span class="d">${jornDateHTML(x.date,seasonId)}</span></div>
       <div class="tl-body">
         ${reqs.length?`<div class="tl-lab">Ha de complir</div><div class="tl-reqs">${reqs.map(r=>`<span class="tl-req">${esc(r)}</span>`).join('')}</div>`:''}
         ${x.entrenarem?`<div class="tl-lab">Hi entrenarem</div><span class="tl-train">${esc(x.entrenarem)}</span>`:''}
@@ -1014,7 +1014,7 @@ function itemHTML(x){
       </div>
       <div class="tl-actions">${tlActions(x).replace('<div class="tl-actions">','').replace('</div>','')} ${bellHTML(x)}</div></div>`;
   }
-  return `<div class="tl-item" style="border-left-color:#7d94a0"><div class="tl-h"><span class="n">📝 Nota</span><span class="d">${tlDate(x.date)}</span></div>
+  return `<div class="tl-item" style="border-left-color:#7d94a0"><div class="tl-h"><span class="n">📝 Nota</span><span class="d">${jornDateHTML(x.date,seasonId)}</span></div>
     <div class="tl-body" style="font-size:12.5px">${esc(x.text||'')}</div>
     <div class="tl-actions">${tlActions(x).replace('<div class="tl-actions">','').replace('</div>','')} ${bellHTML(x)}</div></div>`;
 }
@@ -1052,12 +1052,18 @@ function phaseCardHTML(x,seasonId){
   if(_R&&x.date){const sw=Math.max(1,Math.round((new Date(x.date+'T12:00:00')-_R.start)/6048e5)+1);const ew=sw+(+x.setmanes||0)-1;jorn='J'+sw+' → J'+ew;}
   return `<div class="lp-phase" style="border-left-color:${col}"><div class="lp-ph-h"><span class="n"><span class="cone"><i></i></span> ${TRAIN_LABEL[x.trainType]||'Entrenament'} <span class="wk-big">· ${x.setmanes||'?'} setmanes</span></span><span class="d">${jorn?`<span class="jorn">${jorn}</span><br>`:''}${x.date?'fins '+end:''}</span></div>${trainPlanHTML(x,seasonId)}<div class="tl-actions"><button class="mini" onclick="reorderItem('${x.id}',-1)">↑</button><button class="mini" onclick="reorderItem('${x.id}',1)">↓</button><button class="mini gc" onclick="openPhasePitch('${x.id}')">⚽ Alineació</button><button class="mini" onclick="editTimeline('${x.id}')">✎</button><button class="mini del" onclick="delTimeline('${x.id}')">✕</button> ${bellHTML(x)}</div></div>`;
 }
-function tradeCardHTML(x){
-  if(x.kind==='sale')return `<div class="lp-trade sell"><div class="lp-ph-h"><span class="n">💰 ${x.playerId?playerLabel(x.playerId):esc(x.title||'Venda')}</span><span class="d">${tlDate(x.date)}</span></div><div class="tl-range" style="margin-top:6px">${fmtEur(x.priceMin)} – ${fmtEur(x.priceMax)}</div><div class="tl-actions"><button class="mini" onclick="reorderItem('${x.id}',-1)">↑</button><button class="mini" onclick="reorderItem('${x.id}',1)">↓</button><button class="mini" onclick="editTimeline('${x.id}')">✎</button><button class="mini del" onclick="delTimeline('${x.id}')">✕</button> ${bellHTML(x)}</div></div>`;
-  const reqs=(x.reqsText||'').split('\n').map(s=>s.trim()).filter(Boolean);
-  return `<div class="lp-trade buy"><div class="lp-ph-h"><span class="n">➕ Fitxar <span class="tl-poschip">${esc(x.pos||'?')}</span>${x.srcPhase?' <span class="auto-tag">auto</span>':''}</span><span class="d">${tlDate(x.date)}</span></div>${reqs.length?`<div class="tl-reqs" style="margin-top:8px">${reqs.map(r=>`<span class="tl-req">${esc(r)}</span>`).join('')}</div>`:''}${x.entrenarem?`<div class="lp-mini">Hi entrenarem: <b>${esc(x.entrenarem)}</b></div>`:''}${x.budgetMax?`<div class="lp-mini">Màxim: <b style="color:#f2cf7a">${fmtEur(x.budgetMax)}</b></div>`:''}<div class="tl-actions"><button class="mini" onclick="reorderItem('${x.id}',-1)">↑</button><button class="mini" onclick="reorderItem('${x.id}',1)">↓</button><button class="mini" onclick="editTimeline('${x.id}')">✎</button><button class="mini del" onclick="delTimeline('${x.id}')">✕</button> ${bellHTML(x)}</div></div>`;
+function jornDateHTML(iso,seasonId){
+  const s=seasonId?state.seasons.find(z=>z.id===seasonId):null;const R=s?seaRange(s):null;
+  let j='';if(R&&iso){const jn=Math.max(1,Math.round((new Date(iso+'T12:00:00')-R.start)/6048e5)+1);j='Jornada '+jn;}
+  return `${j?`<span class="jorn">${j}</span><br>`:''}${iso?tlDate(iso):''}`;
 }
-function noteCardHTML(x){return `<div class="lp-note"><div class="lp-ph-h"><span class="n">📝 Nota</span><span class="d">${tlDate(x.date)}</span></div><div style="font-size:12.5px;margin-top:4px">${esc(x.text||'')}</div><div class="tl-actions"><button class="mini" onclick="reorderItem('${x.id}',-1)">↑</button><button class="mini" onclick="reorderItem('${x.id}',1)">↓</button><button class="mini" onclick="editTimeline('${x.id}')">✎</button><button class="mini del" onclick="delTimeline('${x.id}')">✕</button> ${bellHTML(x)}</div></div>`;}
+function jornToDate(N){const i=liniaIdx<0?0:liniaIdx;const sv=ordSeasons()[i]||ordSeasons()[0];const R=sv?seaRange(sv):null;return R?_iso(_add(R.start,(Math.max(1,+N)-1)*7)):'';}
+function tradeCardHTML(x,seasonId){
+  if(x.kind==='sale')return `<div class="lp-trade sell"><div class="lp-ph-h"><span class="n">💰 ${x.playerId?playerLabel(x.playerId):esc(x.title||'Venda')}</span><span class="d">${jornDateHTML(x.date,seasonId)}</span></div><div class="tl-range" style="margin-top:6px">${fmtEur(x.priceMin)} – ${fmtEur(x.priceMax)}</div><div class="tl-actions"><button class="mini" onclick="reorderItem('${x.id}',-1)">↑</button><button class="mini" onclick="reorderItem('${x.id}',1)">↓</button><button class="mini" onclick="editTimeline('${x.id}')">✎</button><button class="mini del" onclick="delTimeline('${x.id}')">✕</button> ${bellHTML(x)}</div></div>`;
+  const reqs=(x.reqsText||'').split('\n').map(s=>s.trim()).filter(Boolean);
+  return `<div class="lp-trade buy"><div class="lp-ph-h"><span class="n">➕ Fitxar <span class="tl-poschip">${esc(x.pos||'?')}</span>${x.srcPhase?' <span class="auto-tag">auto</span>':''}</span><span class="d">${jornDateHTML(x.date,seasonId)}</span></div>${reqs.length?`<div class="tl-reqs" style="margin-top:8px">${reqs.map(r=>`<span class="tl-req">${esc(r)}</span>`).join('')}</div>`:''}${x.entrenarem?`<div class="lp-mini">Hi entrenarem: <b>${esc(x.entrenarem)}</b></div>`:''}${x.budgetMax?`<div class="lp-mini">Màxim: <b style="color:#f2cf7a">${fmtEur(x.budgetMax)}</b></div>`:''}<div class="tl-actions"><button class="mini" onclick="reorderItem('${x.id}',-1)">↑</button><button class="mini" onclick="reorderItem('${x.id}',1)">↓</button><button class="mini" onclick="editTimeline('${x.id}')">✎</button><button class="mini del" onclick="delTimeline('${x.id}')">✕</button> ${bellHTML(x)}</div></div>`;
+}
+function noteCardHTML(x,seasonId){return `<div class="lp-note"><div class="lp-ph-h"><span class="n">📝 Nota</span><span class="d">${jornDateHTML(x.date,seasonId)}</span></div><div style="font-size:12.5px;margin-top:4px">${esc(x.text||'')}</div><div class="tl-actions"><button class="mini" onclick="reorderItem('${x.id}',-1)">↑</button><button class="mini" onclick="reorderItem('${x.id}',1)">↓</button><button class="mini" onclick="editTimeline('${x.id}')">✎</button><button class="mini del" onclick="delTimeline('${x.id}')">✕</button> ${bellHTML(x)}</div></div>`;}
 function tlByOrd(a,b){return ((a.ord==null?1e9:a.ord)-(b.ord==null?1e9:b.ord))||(a.date||'').localeCompare(b.date||'');}
 function reorderItem(id,dir){
   const it=(state.timeline||[]).find(x=>x.id===id);if(!it)return;
@@ -1088,7 +1094,7 @@ function renderLinia(){
     <div class="lp-dots">${dots}</div>
     <div class="lp-card">
       ${s.competicio?`<div class="lp-obj">🏆 ${esc(s.competicio)}</div>`:''}
-      ${ordered.length?ordered.map(function(x){return x.kind==='train'?phaseCardHTML(x,s.id):(x.kind==='note'?noteCardHTML(x):tradeCardHTML(x));}).join(''):'<div class="lp-empty">Cap element. Afegeix-ne amb + Element.</div>'}
+      ${ordered.length?ordered.map(function(x){return x.kind==='train'?phaseCardHTML(x,s.id):(x.kind==='note'?noteCardHTML(x,s.id):tradeCardHTML(x,s.id));}).join(''):'<div class="lp-empty">Cap element. Afegeix-ne amb + Element.</div>'}
       <div class="lp-actions"><button class="mini seaedit" onclick="editSeason('${s.id}')">✎ Edita temporada</button><button class="mini del" onclick="delSeasonTL('${s.id}')">Elimina</button></div>
     </div>
     ${isLast?`<button class="tl-add" style="border-color:rgba(228,171,61,.5);color:#e4ab3d" onclick="defineNextSeason()">＋ Definir següent temporada</button>`:''}`;
@@ -1151,12 +1157,13 @@ function editTrain(id){const x=id?state.timeline.find(i=>i.id===id):{kind:'train
   openSheet(id?'Edita entrenament':'Nou entrenament',[
     {k:'trainType',lab:'Tipus',type:'select',opts:[['gk','Porteria'],['def','Defensa'],['pm','Creativitat'],['wing','Extrem'],['pass','Passades'],['sco','Anotació'],['setp','Pilota aturada']]},
     {k:'setmanes',lab:'Setmanes',type:'number'},
+    {k:'jornada',lab:'Jornada d\'inici (opcional · calcula la data)',type:'number'},
     {k:'date',lab:'Data d\'inici',type:'date'},
     {k:'alert',lab:'Avís',type:'select',opts:ALERT_OPTS}
-  ],{trainType:x.trainType,setmanes:x.setmanes,date:x.date,alert:String(x.alert||0)},async(o)=>{
-    let ph;
-    if(id){ph=state.timeline.find(i=>i.id===id);Object.assign(ph,{kind:'train',trainType:o.trainType,setmanes:+o.setmanes,date:o.date,alert:+o.alert});}
-    else{ph={id:uid(),kind:'train',trainType:o.trainType,setmanes:+o.setmanes,date:o.date,alert:+o.alert};state.timeline.push(ph);}
+  ],{trainType:x.trainType,setmanes:x.setmanes,jornada:'',date:x.date,alert:String(x.alert||0)},async(o)=>{
+    let ph;const date=o.jornada?jornToDate(o.jornada):o.date;
+    if(id){ph=state.timeline.find(i=>i.id===id);Object.assign(ph,{kind:'train',trainType:o.trainType,setmanes:+o.setmanes,date:date,alert:+o.alert});}
+    else{ph={id:uid(),kind:'train',trainType:o.trainType,setmanes:+o.setmanes,date:date,alert:+o.alert};state.timeline.push(ph);}
     splitTrainPhase(ph);
     await save();renderLinia();
   });}
@@ -1168,9 +1175,10 @@ function editSale(id){const x=id?state.timeline.find(i=>i.id===id):{kind:'sale',
     {k:'title',lab:'Títol (si no tries jugador)'},
     {k:'priceMin',lab:'Preu mínim (€)',type:'number'},
     {k:'priceMax',lab:'Preu màxim (€)',type:'number'},
+    {k:'jornada',lab:'Jornada (opcional · calcula la data)',type:'number'},
     {k:'date',lab:'Data',type:'date'},
     {k:'alert',lab:'Avís',type:'select',opts:ALERT_OPTS}
-  ],{playerId:x.playerId||'',title:x.title||'',priceMin:x.priceMin,priceMax:x.priceMax,date:x.date,alert:String(x.alert||0)},async(o)=>{tlSave(id,{kind:'sale',playerId:o.playerId,title:o.title,priceMin:o.priceMin,priceMax:o.priceMax,date:o.date,alert:+o.alert});});}
+  ],{playerId:x.playerId||'',title:x.title||'',priceMin:x.priceMin,priceMax:x.priceMax,jornada:'',date:x.date,alert:String(x.alert||0)},async(o)=>{const date=o.jornada?jornToDate(o.jornada):o.date;tlSave(id,{kind:'sale',playerId:o.playerId,title:o.title,priceMin:o.priceMin,priceMax:o.priceMax,date:date,alert:+o.alert});});}
 
 function editBuy(id){const x=id?state.timeline.find(i=>i.id===id):{kind:'buy',pos:'Lateral',reqsText:'',entrenarem:'',motiu:'',budgetMax:0,date:tlDefaultDate,alert:0};
   openSheet(id?'Edita fitxatge':'Nou fitxatge',[
@@ -1179,16 +1187,18 @@ function editBuy(id){const x=id?state.timeline.find(i=>i.id===id):{kind:'buy',po
     {k:'entrenarem',lab:'Hi entrenarem'},
     {k:'motiu',lab:'Per a què'},
     {k:'budgetMax',lab:'Màxim a gastar (€)',type:'number'},
+    {k:'jornada',lab:'Jornada (opcional · calcula la data)',type:'number'},
     {k:'date',lab:'Data',type:'date'},
     {k:'alert',lab:'Avís',type:'select',opts:ALERT_OPTS}
-  ],{pos:x.pos,reqsText:x.reqsText||'',entrenarem:x.entrenarem||'',motiu:x.motiu||'',budgetMax:x.budgetMax,date:x.date,alert:String(x.alert||0)},async(o)=>{tlSave(id,{kind:'buy',pos:o.pos,reqsText:o.reqsText,entrenarem:o.entrenarem,motiu:o.motiu,budgetMax:o.budgetMax,date:o.date,alert:+o.alert});});}
+  ],{pos:x.pos,reqsText:x.reqsText||'',entrenarem:x.entrenarem||'',motiu:x.motiu||'',budgetMax:x.budgetMax,jornada:'',date:x.date,alert:String(x.alert||0)},async(o)=>{const date=o.jornada?jornToDate(o.jornada):o.date;tlSave(id,{kind:'buy',pos:o.pos,reqsText:o.reqsText,entrenarem:o.entrenarem,motiu:o.motiu,budgetMax:o.budgetMax,date:date,alert:+o.alert});});}
 
 function editNote(id){const x=id?state.timeline.find(i=>i.id===id):{kind:'note',text:'',date:tlDefaultDate,alert:0};
   openSheet(id?'Edita nota':'Nova nota',[
     {k:'text',lab:'Text',type:'textarea'},
+    {k:'jornada',lab:'Jornada (opcional · calcula la data)',type:'number'},
     {k:'date',lab:'Data',type:'date'},
     {k:'alert',lab:'Avís',type:'select',opts:ALERT_OPTS}
-  ],{text:x.text||'',date:x.date,alert:String(x.alert||0)},async(o)=>{tlSave(id,{kind:'note',text:o.text,date:o.date,alert:+o.alert});});}
+  ],{text:x.text||'',jornada:'',date:x.date,alert:String(x.alert||0)},async(o)=>{const date=o.jornada?jornToDate(o.jornada):o.date;tlSave(id,{kind:'note',text:o.text,date:date,alert:+o.alert});});}
 
 /* ---------- training projection engine ---------- */
 const TRAIN_SKILL={gk:'por',def:'def',pm:'cre',wing:'ext',pass:'pas',sco:'ano',setp:'pa'};
@@ -1250,10 +1260,10 @@ function openStats(id,seasonId,mode,sid,role){
   const trained=R?(state.timeline||[]).some(x=>x.kind==='train'&&x.date&&x.date>=startISO&&x.date<endISO&&playerRateInPhase(pl,x)>0):false;
   const sc=seasonId||'';
   const ex=sid?(",'"+sid+"','"+role+"'"):'';
-  const ageStr=(mode==='plan'&&R)?ageAtISO(pl.edat,startISO):(pl.edat||'');
+  const ageStr=(mode==='plan'&&R)?ageAtISO(pl.edat,endISO):(pl.edat||'');
   document.getElementById('sheet-title').textContent='Estadístiques';
   document.getElementById('sheet-body').innerHTML=`
-    <div class="pj-hd">${pl.home?'<span class="heart">♥</span> ':''}${esc(pl.nom)}<span class="pj-age">${esc(ageStr)}${(mode==='plan'&&s)?' · a T'+s.temporada:''}${pl.esp?' · '+esc(pl.esp):''}</span></div>
+    <div class="pj-hd">${pl.home?'<span class="heart">♥</span> ':''}${esc(pl.nom)}<span class="pj-age">${esc(ageStr)}${(mode==='plan'&&s)?' · final T'+s.temporada:''}${(pl.esp&&pl.esp!=='—')?' · '+esc(pl.esp):''}</span></div>
     <div class="pj-toggle"><button class="${mode==='now'?'on':''}" onclick="openStats('${id}','${sc}','now'${ex})">Ara</button><button class="${mode==='plan'?'on':''}" onclick="openStats('${id}','${sc}','plan'${ex})">Amb el pla</button></div>
     ${mode==='plan'?`<div class="pj-tag"><span style="color:#5a9a34">verd</span> = assolit (temporades anteriors) · <span style="color:#e4ab3d">groc</span> = puja a ${s?('T'+s.temporada):'aquesta temporada'}</div>`:''}
     ${rows}
