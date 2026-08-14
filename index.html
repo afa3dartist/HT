@@ -377,7 +377,7 @@
 <body>
 <header class="top">
   <div class="top-row">
-    <div><div class="brand">Hattrick · Projecte llarg termini <span class="brand-v">v11-10</span></div></div>
+    <div><div class="brand">Hattrick · Projecte llarg termini <span class="brand-v">v11-11</span></div></div>
     <div class="top-btns"><button class="sync-btn" onclick="hardRefresh()" title="Actualitza l'app"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg></button><button class="sync-btn" id="sync-btn" onclick="openSync()" title="Sincronització"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19a4.5 4.5 0 0 0 .5-9 6 6 0 0 0-11.6-1.6A4 4 0 0 0 6 19h11.5z"/></svg></button></div>
   </div>
   <div class="sync-status" id="sync-status"></div>
@@ -420,7 +420,7 @@
     <div><div class="pit-title" id="pit-title">Alineació</div><div class="pit-sub" id="pit-sub"></div></div>
     <button class="pit-close" onclick="closePitch()">✕</button>
   </div>
-  <div class="pit-controls"><div class="seg" id="pit-match"></div><button class="compete-btn" id="pit-swap" onclick="toggleSwap()"></button><button class="compete-btn" id="pit-compete" onclick="toggleCompete()"></button><button class="compete-btn" id="pit-copy" onclick="openCopyLineup()">⧉ Copia</button></div>
+  <div class="pit-controls"><div class="seg" id="pit-match"></div><button class="compete-btn" id="pit-swap" onclick="toggleSwap()"></button><button class="compete-btn" id="pit-compete" onclick="toggleCompete()"></button></div>
   <div class="pit-forms" id="pit-forms"></div>
   <div class="pitch-mini" id="pitch-mini"></div>
   <div class="pit-legend">🟢 100% · 🔵 50% · 🔴/⚪ no entrena · ⚫ a fitxar</div>
@@ -1130,51 +1130,32 @@ function openSlot(sid,role){
   sheetSave=null;var sv=document.querySelector('.sheet-actions .save');if(sv)sv.style.display='none';
   document.getElementById('ov').classList.add('on');
 }
-let copySel=new Set();
-function copyTargets(){
-  const cur=pitCurrent;const seasons=ordSeasons();const out=[];
-  (state.timeline||[]).filter(x=>x.kind==='train').forEach(x=>{
-    if(pitKind==='phase'&&x.id===cur)return;
-    const si=itemSeaIdx(x,seasons);const sea=seasons[si];
-    const t=(sea?('T'+sea.temporada+' · '):'')+(TRAIN_LABEL[x.trainType]||'Entrenament')+' · '+(x.setmanes||'?')+' setm';
-    out.push({id:x.id,kind:'phase',label:t,date:x.date||''});
-  });
-  seasons.forEach(sea=>{ if(pitKind==='season'&&sea.id===cur)return; out.push({id:sea.id,kind:'season',label:'T'+sea.temporada+(sea.divisio?' · '+sea.divisio:'')+' (temporada)',date:sea.dataJornada||''}); });
-  out.sort((a,b)=>(a.date||'').localeCompare(b.date||''));
-  return out;
-}
-function openCopyLineup(){copySel=new Set();renderCopySheet();document.getElementById('ov').classList.add('on');}
-function toggleCopyTarget(id){if(copySel.has(id))copySel.delete(id);else copySel.add(id);renderCopySheet();}
-function selAllCopy(v){const t=copyTargets();copySel=new Set(v?t.map(x=>x.id):[]);renderCopySheet();}
-function renderCopySheet(){
-  const tgts=copyTargets();
-  document.getElementById('sheet-title').textContent='Copia alineació a…';
-  const note=`<div class="psub">Copia l'onze de <b>Lliga</b> i <b>Copa</b> d'aquesta alineació als destins triats. Sobreescriu el que hi hagi al destí. El color d'entrenament de cada destí es pinta segons el seu propi tipus.</div>`;
-  const bar=tgts.length>1?`<div class="pk-quick"><button onclick="selAllCopy(true)">☑ Tots</button><button onclick="selAllCopy(false)">☐ Cap</button></div>`:'';
-  const rows=tgts.length?tgts.map(t=>{
-    const on=copySel.has(t.id);const ic=t.kind==='phase'?'⚽':'🗓️';
-    return `<button class="pk-row ${on?'cur':''}" onclick="toggleCopyTarget('${t.id}')"><span class="pk-nm">${on?'☑':'☐'} ${ic} ${esc(t.label)}</span><span class="pk-meta">${t.date?tlDate(t.date):''}</span></button>`;
-  }).join(''):'<div class="lp-empty">Encara no hi ha altres entrenaments o temporades on copiar. Crea abans les fases de destí.</div>';
-  const btn=tgts.length?`<button class="save" style="width:100%;margin-top:12px;${copySel.size?'':'opacity:.45'}" onclick="doCopyLineup()">Copia a ${copySel.size} destí${copySel.size!==1?'s':''}</button>`:'';
-  document.getElementById('sheet-body').innerHTML=note+bar+rows+btn;
-  sheetSave=null;const sv=document.querySelector('.sheet-actions .save');if(sv)sv.style.display='none';
-}
-function doCopyLineup(){
-  if(!copySel.size)return;
-  const src=curOwner();if(!src)return;const srcLus=ensureLineups(src);
-  let n=0;
-  copySel.forEach(id=>{
-    const isPhase=(state.timeline||[]).some(x=>x.id===id);
-    const tgt=isPhase?(state.timeline||[]).find(x=>x.id===id):state.seasons.find(x=>x.id===id);
-    if(!tgt||tgt===src)return;
-    if(isPhase)state.timeline=(state.timeline||[]).filter(x=>!(x.kind==='buy'&&x.srcPhase===id));
-    ensureLineups(tgt);
-    tgt.lineups.lliga=JSON.parse(JSON.stringify(srcLus.lliga));
-    tgt.lineups.copa=JSON.parse(JSON.stringify(srcLus.copa));
-    n++;
-  });
+let elClip=null;
+try{elClip=JSON.parse(localStorage.getItem('ht_elclip')||'null');}catch(e){}
+function elClipLabel(){if(!elClip)return '';const x=elClip;
+  if(x.kind==='train')return (TRAIN_LABEL[x.trainType]||'Entrenament')+' · '+(x.setmanes||'?')+' setm';
+  if(x.kind==='sale')return 'Venda'+(x.playerId?(' '+playerName(x.playerId)):(x.title?(' '+x.title):''));
+  if(x.kind==='buy')return 'Fitxar '+(x.pos||'');
+  return 'Nota';}
+function copyElement(id){const x=(state.timeline||[]).find(i=>i.id===id);if(!x)return;elClip=JSON.parse(JSON.stringify(x));try{localStorage.setItem('ht_elclip',JSON.stringify(elClip));}catch(e){}setSyncStatus('Element copiat: '+elClipLabel()+' \u2713','ok');renderLinia();}
+function clearElClip(){elClip=null;try{localStorage.removeItem('ht_elclip');}catch(e){}renderLinia();}
+function pasteElement(){
+  if(!elClip)return;
+  const seasons=ordSeasons();const s=seasons[liniaIdx]||seasons[0];
+  if(!s){setSyncStatus('Primer defineix una temporada','err');return;}
+  const R=seaRange(s);
+  const clone=JSON.parse(JSON.stringify(elClip));
+  clone.id=uid();delete clone.ord;delete clone.srcPhase;delete clone.srcSlot;delete clone.srcMatch;
+  if(R){
+    let off=0;
+    if(elClip.date){const src=ordSeasons().map(z=>({R:seaRange(z)})).find(o=>o.R&&new Date(elClip.date+'T12:00:00')>=o.R.start&&new Date(elClip.date+'T12:00:00')<o.R.end);
+      if(src)off=Math.max(0,Math.round((new Date(elClip.date+'T12:00:00')-src.R.start)/6048e5));}
+    clone.date=_iso(_add(R.start,off*7));
+  }
+  if(!state.timeline)state.timeline=[];
+  state.timeline.push(clone);
   save();renderLinia();
-  document.getElementById('sheet-body').innerHTML=`<div style="text-align:center;padding:24px 10px"><div style="font-size:34px">✓</div><div style="font-family:'Oswald';font-weight:600;font-size:16px;margin-top:8px">Copiat a ${n} destí${n!==1?'s':''}</div><div class="note">L'onze de Lliga i Copa s'ha clonat. Recorda que qui entrena a cada destí depèn del seu tipus d'entrenament.</div><button class="save" style="width:100%;margin-top:14px" onclick="closeSheet()">Fet</button></div>`;
+  setSyncStatus('Element enganxat a T'+s.temporada+' \u2713','ok');
 }
 document.getElementById('pitchov').addEventListener('click',e=>{if(e.target.id==='pitchov')closePitch();});
 
@@ -1206,7 +1187,7 @@ function itemHTML(x){
     const end=x.date?_fmt(_add(_sat(x.date),(+x.setmanes||0)*7)):'';
     return `<div class="tl-item" style="border-left-color:${col}"><div class="tl-h"><span class="n"><span class="cone"><i></i></span> ${TRAIN_LABEL[x.trainType]||'Entrenament'}</span><span class="d">${x.setmanes||'?'} setm${x.date?' · '+tlDate(x.date)+'→'+end:''}</span></div>
       ${trainPlanHTML(x)}
-      <div class="tl-actions"><button class="mini gc" onclick="openPhasePitch('${x.id}')">⚽ Alineació</button><button class="mini" onclick="editTimeline('${x.id}')">✎</button><button class="mini del" onclick="delTimeline('${x.id}')">✕</button> ${bellHTML(x)}</div></div>`;
+      <div class="tl-actions"><button class="mini gc" onclick="openPhasePitch('${x.id}')">⚽ Alineació</button><button class="mini" onclick="editTimeline('${x.id}')">✎</button><button class="mini del" onclick="delTimeline('${x.id}')">✕</button><button class="mini" onclick="copyElement('${x.id}')" title="Copia l'element">⧉</button> ${bellHTML(x)}</div></div>`;
   }
   if(x.kind==='sale'){
     return `<div class="tl-item" style="border-left-color:#f6cf5c"><div class="tl-h"><span class="n">💰 ${x.playerId?playerLabel(x.playerId):esc(x.title||'Venda')}</span><span class="d">${jornDateHTML(x.date,seasonId)}</span></div>
@@ -1317,7 +1298,7 @@ function phaseCardHTML(x,seasonId){
   const end=x.date?_fmt(_add(_sat(x.date),(+x.setmanes||0)*7)):'';
   let jorn='';const _s=seasonId?state.seasons.find(z=>z.id===seasonId):null;const _R=_s?seaRange(_s):null;
   if(_R&&x.date){const sw=Math.max(1,Math.round((new Date(x.date+'T12:00:00')-_R.start)/6048e5)+1);const ew=sw+(+x.setmanes||0)-1;jorn='J'+sw+' → J'+ew;}
-  return `<div class="lp-phase" style="border-left-color:${col}"><div class="lp-ph-h"><span class="n"><span class="cone"><i></i></span> ${TRAIN_LABEL[x.trainType]||'Entrenament'} <span class="wk-big">· ${x.setmanes||'?'} setmanes</span></span><span class="d">${jorn?`<span class="jorn">${jorn}</span><br>`:''}${x.date?'fins '+end:''}</span></div>${trainPlanHTML(x,seasonId)}<div class="tl-actions"><button class="mini" onclick="reorderItem('${x.id}',-1)">↑</button><button class="mini" onclick="reorderItem('${x.id}',1)">↓</button><button class="mini gc" onclick="openPhasePitch('${x.id}')">⚽ Alineació</button><button class="mini" onclick="editTimeline('${x.id}')">✎</button><button class="mini del" onclick="delTimeline('${x.id}')">✕</button> ${bellHTML(x)}</div></div>`;
+  return `<div class="lp-phase" style="border-left-color:${col}"><div class="lp-ph-h"><span class="n"><span class="cone"><i></i></span> ${TRAIN_LABEL[x.trainType]||'Entrenament'} <span class="wk-big">· ${x.setmanes||'?'} setmanes</span></span><span class="d">${jorn?`<span class="jorn">${jorn}</span><br>`:''}${x.date?'fins '+end:''}</span></div>${trainPlanHTML(x,seasonId)}<div class="tl-actions"><button class="mini" onclick="reorderItem('${x.id}',-1)">↑</button><button class="mini" onclick="reorderItem('${x.id}',1)">↓</button><button class="mini gc" onclick="openPhasePitch('${x.id}')">⚽ Alineació</button><button class="mini" onclick="editTimeline('${x.id}')">✎</button><button class="mini del" onclick="delTimeline('${x.id}')">✕</button><button class="mini" onclick="copyElement('${x.id}')" title="Copia l'element">⧉</button> ${bellHTML(x)}</div></div>`;
 }
 function jornDateHTML(iso,seasonId){
   const s=seasonId?state.seasons.find(z=>z.id===seasonId):null;const R=s?seaRange(s):null;
@@ -1326,11 +1307,11 @@ function jornDateHTML(iso,seasonId){
 }
 function jornToDate(N){const i=liniaIdx<0?0:liniaIdx;const sv=ordSeasons()[i]||ordSeasons()[0];const R=sv?seaRange(sv):null;return R?_iso(_add(R.start,(Math.max(1,+N)-1)*7)):'';}
 function tradeCardHTML(x,seasonId){
-  if(x.kind==='sale')return `<div class="lp-trade sell"><div class="lp-ph-h"><span class="n">💰 ${x.playerId?playerLabel(x.playerId):esc(x.title||'Venda')}</span><span class="d">${jornDateHTML(x.date,seasonId)}</span></div><div class="tl-range" style="margin-top:6px">${fmtEur(x.priceMin)} – ${fmtEur(x.priceMax)}</div><div class="tl-actions"><button class="mini" onclick="reorderItem('${x.id}',-1)">↑</button><button class="mini" onclick="reorderItem('${x.id}',1)">↓</button><button class="mini" onclick="editTimeline('${x.id}')">✎</button><button class="mini del" onclick="delTimeline('${x.id}')">✕</button> ${bellHTML(x)}</div></div>`;
+  if(x.kind==='sale')return `<div class="lp-trade sell"><div class="lp-ph-h"><span class="n">💰 ${x.playerId?playerLabel(x.playerId):esc(x.title||'Venda')}</span><span class="d">${jornDateHTML(x.date,seasonId)}</span></div><div class="tl-range" style="margin-top:6px">${fmtEur(x.priceMin)} – ${fmtEur(x.priceMax)}</div><div class="tl-actions"><button class="mini" onclick="reorderItem('${x.id}',-1)">↑</button><button class="mini" onclick="reorderItem('${x.id}',1)">↓</button><button class="mini" onclick="editTimeline('${x.id}')">✎</button><button class="mini del" onclick="delTimeline('${x.id}')">✕</button><button class="mini" onclick="copyElement('${x.id}')" title="Copia l'element">⧉</button> ${bellHTML(x)}</div></div>`;
   const reqs=(x.reqsText||'').split('\n').map(s=>s.trim()).filter(Boolean);
-  return `<div class="lp-trade buy"><div class="lp-ph-h"><span class="n">➕ Fitxar <span class="tl-poschip">${esc(x.pos||'?')}</span>${x.srcPhase?' <span class="auto-tag">auto</span>':''}</span><span class="d">${jornDateHTML(x.date,seasonId)}</span></div>${reqs.length?`<div class="tl-reqs" style="margin-top:8px">${reqs.map(r=>`<span class="tl-req">${esc(r)}</span>`).join('')}</div>`:''}${x.entrenarem?`<div class="lp-mini">Hi entrenarem: <b>${esc(x.entrenarem)}</b></div>`:''}${x.budgetMax?`<div class="lp-mini">Màxim: <b style="color:#f2cf7a">${fmtEur(x.budgetMax)}</b></div>`:''}<div class="tl-actions"><button class="mini" onclick="reorderItem('${x.id}',-1)">↑</button><button class="mini" onclick="reorderItem('${x.id}',1)">↓</button><button class="mini" onclick="editTimeline('${x.id}')">✎</button><button class="mini del" onclick="delTimeline('${x.id}')">✕</button> ${bellHTML(x)}</div></div>`;
+  return `<div class="lp-trade buy"><div class="lp-ph-h"><span class="n">➕ Fitxar <span class="tl-poschip">${esc(x.pos||'?')}</span>${x.srcPhase?' <span class="auto-tag">auto</span>':''}</span><span class="d">${jornDateHTML(x.date,seasonId)}</span></div>${reqs.length?`<div class="tl-reqs" style="margin-top:8px">${reqs.map(r=>`<span class="tl-req">${esc(r)}</span>`).join('')}</div>`:''}${x.entrenarem?`<div class="lp-mini">Hi entrenarem: <b>${esc(x.entrenarem)}</b></div>`:''}${x.budgetMax?`<div class="lp-mini">Màxim: <b style="color:#f2cf7a">${fmtEur(x.budgetMax)}</b></div>`:''}<div class="tl-actions"><button class="mini" onclick="reorderItem('${x.id}',-1)">↑</button><button class="mini" onclick="reorderItem('${x.id}',1)">↓</button><button class="mini" onclick="editTimeline('${x.id}')">✎</button><button class="mini del" onclick="delTimeline('${x.id}')">✕</button><button class="mini" onclick="copyElement('${x.id}')" title="Copia l'element">⧉</button> ${bellHTML(x)}</div></div>`;
 }
-function noteCardHTML(x,seasonId){return `<div class="lp-note"><div class="lp-ph-h"><span class="n">📝 Nota</span><span class="d">${jornDateHTML(x.date,seasonId)}</span></div><div style="font-size:12.5px;margin-top:4px">${esc(x.text||'')}</div><div class="tl-actions"><button class="mini" onclick="reorderItem('${x.id}',-1)">↑</button><button class="mini" onclick="reorderItem('${x.id}',1)">↓</button><button class="mini" onclick="editTimeline('${x.id}')">✎</button><button class="mini del" onclick="delTimeline('${x.id}')">✕</button> ${bellHTML(x)}</div></div>`;}
+function noteCardHTML(x,seasonId){return `<div class="lp-note"><div class="lp-ph-h"><span class="n">📝 Nota</span><span class="d">${jornDateHTML(x.date,seasonId)}</span></div><div style="font-size:12.5px;margin-top:4px">${esc(x.text||'')}</div><div class="tl-actions"><button class="mini" onclick="reorderItem('${x.id}',-1)">↑</button><button class="mini" onclick="reorderItem('${x.id}',1)">↓</button><button class="mini" onclick="editTimeline('${x.id}')">✎</button><button class="mini del" onclick="delTimeline('${x.id}')">✕</button><button class="mini" onclick="copyElement('${x.id}')" title="Copia l'element">⧉</button> ${bellHTML(x)}</div></div>`;}
 function tlByOrd(a,b){return ((a.ord==null?1e9:a.ord)-(b.ord==null?1e9:b.ord))||(a.date||'').localeCompare(b.date||'');}
 function reorderItem(id,dir){
   const it=(state.timeline||[]).find(x=>x.id===id);if(!it)return;
@@ -1365,6 +1346,7 @@ function renderLinia(){
       ${liniaView==='cal'?renderSeasonCalendar(s):(ordered.length?ordered.map(function(x){return x.kind==='train'?phaseCardHTML(x,s.id):(x.kind==='note'?noteCardHTML(x,s.id):tradeCardHTML(x,s.id));}).join(''):'<div class="lp-empty">Cap element. Afegeix-ne amb + Element.</div>')}
       <div class="lp-actions"><button class="mini seaedit" onclick="editSeason('${s.id}')">✎ Edita temporada</button><button class="mini del" onclick="delSeasonTL('${s.id}')">Elimina</button></div>
     </div>
+    ${elClip?`<div style="display:flex;gap:8px;margin-top:4px"><button class="tl-add" style="flex:1;margin:0;border-color:rgba(70,180,207,.55);color:#bfe9f3" onclick="pasteElement()">📋 Enganxa «${esc(elClipLabel())}» a T${s.temporada}</button><button class="mini del" style="flex:none" onclick="clearElClip()" title="Descarta">✕</button></div>`:''}
     ${isLast?`<button class="tl-add" style="border-color:rgba(228,171,61,.5);color:#e4ab3d" onclick="defineNextSeason()">＋ Definir següent temporada</button>`:''}`;
   renderAvisosTab();
 }
