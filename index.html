@@ -1260,11 +1260,13 @@ function openStats(id,seasonId,mode,sid,role){
   const trained=R?(state.timeline||[]).some(x=>x.kind==='train'&&x.date&&x.date>=startISO&&x.date<endISO&&playerRateInPhase(pl,x)>0):false;
   const sc=seasonId||'';
   const ex=sid?(",'"+sid+"','"+role+"'"):'';
-  const ageStr=(mode==='plan'&&R)?ageAtISO(pl.edat,endISO):(pl.edat||'');
+  let planEnd=startISO;
+  if(mode==='plan'&&R){(state.timeline||[]).forEach(x=>{if(x.kind==='train'&&x.date&&x.date>=startISO&&x.date<endISO&&x.setmanes){const e=_iso(_add(_sat(x.date),(+x.setmanes)*7));if(e>planEnd)planEnd=e;}});}
+  const ageStr=(mode==='plan'&&R)?ageAtISO(pl.edat,planEnd):(pl.edat||'');
   document.getElementById('sheet-title').textContent='Estadístiques';
   document.getElementById('sheet-body').innerHTML=`
-    <div class="pj-hd">${pl.home?'<span class="heart">♥</span> ':''}${esc(pl.nom)}<span class="pj-age">${esc(ageStr)}${(mode==='plan'&&s)?' · final T'+s.temporada:''}${(pl.esp&&pl.esp!=='—')?' · '+esc(pl.esp):''}</span></div>
-    <div class="pj-toggle"><button class="${mode==='now'?'on':''}" onclick="openStats('${id}','${sc}','now'${ex})">Ara</button><button class="${mode==='plan'?'on':''}" onclick="openStats('${id}','${sc}','plan'${ex})">Amb el pla</button></div>
+    <div class="pj-hd">${pl.home?'<span class="heart">♥</span> ':''}${esc(pl.nom)}<span class="pj-age">${esc(ageStr)}${(pl.esp&&pl.esp!=='—')?' · '+esc(pl.esp):''}</span></div>
+    <div class="pj-toggle"><button class="${mode==='now'?'on':''}" onclick="openStats('${id}','${sc}','now'${ex})">Ara</button><button class="${mode==='plan'?'on':''}" onclick="openStats('${id}','${sc}','plan'${ex})">Projecció</button></div>
     ${mode==='plan'?`<div class="pj-tag"><span style="color:#5a9a34">verd</span> = assolit (temporades anteriors) · <span style="color:#e4ab3d">groc</span> = puja a ${s?('T'+s.temporada):'aquesta temporada'}</div>`:''}
     ${rows}
     ${(mode==='plan'&&!trained)?'<div class="pj-warn">No entrena en aquesta temporada; posa\'l a l\'alineació d\'una fase per veure el que puja.</div>':''}
