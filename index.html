@@ -1201,6 +1201,8 @@ function ageMult(a){a=Math.max(17,a);return 1+0.05*(a-17)+0.02*Math.pow(Math.max
 function coachMult(){const c=state.coach||{};const tr=+c.trainer||5,a1=+c.a1||0,a2=+c.a2||0;const score=tr+0.4*(a1+a2);return (5+0.4*10)/Math.max(1,score);}
 function editCoach(){const c=state.coach||{trainer:5,a1:5,a2:5};openSheet('Personal · entrenador i assistents',[{k:'trainer',lab:'Entrenador (conos 1-5)',type:'number'},{k:'a1',lab:'Assistent 1 (conos 0-5)',type:'number'},{k:'a2',lab:'Assistent 2 (conos 0-5)',type:'number'}],{trainer:c.trainer,a1:c.a1,a2:c.a2},async(o)=>{state.coach={trainer:+o.trainer||5,a1:+o.a1||0,a2:+o.a2||0};await save();});}
 function parseAge(e){const m=(''+ (e||'')).match(/\d+/);return m?+m[0]:20;}
+function parseAgeYD(e){e=''+(e||'');const my=e.match(/(\d+)\s*(?:a|any)/i);const md=e.match(/(\d+)\s*(?:d|die)/i);return {Y:my?+my[1]:20,D:md?+md[1]:0};}
+function ageAtISO(edat,iso){const{Y,D}=parseAgeYD(edat);const today=new Date();today.setHours(12,0,0,0);const days=Math.max(0,Math.round((new Date(iso+'T12:00:00')-today)/864e5));const t=Y*112+D+days;return Math.floor(t/112)+'a '+(t%112)+'d';}
 function playerRateInPhase(pl,ph){let rate=0;if(!ph.lineups)return 0;['lliga','copa'].forEach(m=>{const lu=ph.lineups[m];if(!lu||!lu.slots)return;Object.entries(lu.slots).forEach(([sid,d])=>{if(d&&d.playerId===pl.id){const a=BOARD.find(x=>x[0]===sid);const pct=a?slotPct(a[1],ph.trainType):0;if(pct>rate)rate=pct;}});});return rate;}
 function projectPlayer(pl,fromISO,toISO){
   const sk={};SKILL_ORDER.forEach(k=>{sk[k]={lvl:+(pl[k]||0),prog:0};});
@@ -1248,9 +1250,10 @@ function openStats(id,seasonId,mode,sid,role){
   const trained=R?(state.timeline||[]).some(x=>x.kind==='train'&&x.date&&x.date>=startISO&&x.date<endISO&&playerRateInPhase(pl,x)>0):false;
   const sc=seasonId||'';
   const ex=sid?(",'"+sid+"','"+role+"'"):'';
+  const ageStr=(mode==='plan'&&R)?ageAtISO(pl.edat,startISO):(pl.edat||'');
   document.getElementById('sheet-title').textContent='Estadístiques';
   document.getElementById('sheet-body').innerHTML=`
-    <div class="pj-hd">${pl.home?'<span class="heart">♥</span> ':''}${esc(pl.nom)}<span class="pj-age">${esc(pl.edat||'')}${pl.esp?' · '+esc(pl.esp):''}</span></div>
+    <div class="pj-hd">${pl.home?'<span class="heart">♥</span> ':''}${esc(pl.nom)}<span class="pj-age">${esc(ageStr)}${(mode==='plan'&&s)?' · a T'+s.temporada:''}${pl.esp?' · '+esc(pl.esp):''}</span></div>
     <div class="pj-toggle"><button class="${mode==='now'?'on':''}" onclick="openStats('${id}','${sc}','now'${ex})">Ara</button><button class="${mode==='plan'?'on':''}" onclick="openStats('${id}','${sc}','plan'${ex})">Amb el pla</button></div>
     ${mode==='plan'?`<div class="pj-tag"><span style="color:#5a9a34">verd</span> = assolit (temporades anteriors) · <span style="color:#e4ab3d">groc</span> = puja a ${s?('T'+s.temporada):'aquesta temporada'}</div>`:''}
     ${rows}
