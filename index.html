@@ -1340,6 +1340,7 @@ function openStats(id,seasonId,mode,sid,role){
   let planEnd=startISO;
   if(mode==='plan'&&R){(state.timeline||[]).forEach(x=>{if(x.kind==='train'&&x.date&&x.date>=startISO&&x.date<endISO&&x.setmanes){const e=_iso(_add(_sat(x.date),(+x.setmanes)*7));if(e>planEnd)planEnd=e;}});}
   const ageStr=(mode==='plan'&&R)?ageAtISO(pl.edat,planEnd):(pl.edat||'');
+  const wageObj=(mode==='plan')?(()=>{const o={edat:ageStr,estranger:pl.estranger};SKILL_ORDER.forEach(k=>{o[k]=proj.sk[k].lvl;});return o;})():pl;
   document.getElementById('sheet-title').textContent='Estadístiques';
   document.getElementById('sheet-body').innerHTML=`
     <div class="pj-hd">${pl.home?'<span class="heart">♥</span> ':''}${esc(pl.nom)}${pl.planned?' <span class="tagp">a fitxar</span>':''}<span class="pj-age">${esc(ageStr)}</span></div>
@@ -1349,7 +1350,7 @@ function openStats(id,seasonId,mode,sid,role){
     ${rows}
     ${(mode==='plan'&&!trained)?'<div class="pj-warn">No entrena en aquesta temporada; posa\'l a l\'alineació d\'una fase per veure el que puja.</div>':''}
     <div class="tl-actions" style="margin-top:12px"><button class="mini" onclick="${pl.planned?`editPlanned('${id}')`:`editPlayer('${id}')`}">✎ Edita jugador</button>${sid?`<button class="mini gc" onclick="openSlot('${sid}','${role}')">Canviar posició</button>`:''}</div>
-    <div class="pj-wage">Sou aprox: <b>${fmtEur(approxWage(pl))}</b> / setmana ${pl.estranger?'· estranger':'· nacional'}</div>
+    <div class="pj-wage">Sou aprox: <b>${fmtEur(approxWage(wageObj))}</b> / setmana ${pl.estranger?'· estranger':'· nacional'}${mode==='plan'?' · projectat':' · actual'}</div>
     <div class="pj-disc">${mode==='plan'?`Estimació (nivell + edat). El verd assumeix fet l'entrenament de les temporades anteriors.`:'Estadístiques actuals (avui).'}</div>`;
   sheetSave=null;
   var sv=document.querySelector('.sheet-actions .save');if(sv)sv.style.display='none';
