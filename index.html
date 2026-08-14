@@ -315,6 +315,10 @@
   .lp-ph-h .d{text-align:right;line-height:1.35}
   .pl.previst{border:1.5px dashed rgba(70,180,207,.5);background:rgba(70,180,207,.05)}
   .tagp{font-family:"Oswald";font-size:8.5px;letter-spacing:.05em;text-transform:uppercase;color:#bfe9f3;border:1px solid rgba(70,180,207,.5);border-radius:20px;padding:1px 6px}
+  .esp-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-top:4px}
+  .esp-opt{display:flex;align-items:center;gap:8px;padding:9px 10px;border:1px solid var(--brd);border-radius:9px;background:var(--panel2);color:var(--ink);font-family:"Oswald";font-weight:600;font-size:12px;cursor:pointer;text-align:left}
+  .esp-opt svg{width:18px;height:18px;flex:none}
+  .esp-opt.on{border-color:color-mix(in srgb,var(--acc) 55%,transparent);background:color-mix(in srgb,var(--acc) 15%,transparent);color:var(--acc)}
 </style>
 </head>
 <body>
@@ -738,6 +742,21 @@ function delItem(coll,id){
 }
 
 /* ---------- sheet editor ---------- */
+function skillOpts(mn,mx){mn=mn==null?0:mn;mx=mx==null?20:mx;const a=[['','—']];for(let i=mn;i<=mx;i++)a.push([String(i),i+' · '+(LVLNAME[i]||'')]);return a;}
+function jornOpts(){const a=[['','—']];for(let i=1;i<=16;i++)a.push([String(i),'Jornada '+i]);return a;}
+function wkOpts(){const a=[];for(let i=1;i<=16;i++)a.push([String(i),i+' setmanes']);return a;}
+function coneOpts(mn,mx){const a=[];for(let i=mn;i<=mx;i++)a.push([String(i),i+' cons']);return a;}
+const ESP_LIST=[
+ ['','Cap especialitat','<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M6.5 6.5l11 11"/></svg>'],
+ ['Tècnic','Tècnic','<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="3.2"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M19.1 4.9L17 7M7 17l-2.1 2.1"/></svg>'],
+ ['Ràpid','Ràpid','<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h8M3 12h6M5 16h7"/><path d="M13 5l6 7-6 7"/></svg>'],
+ ['Potent','Potent','<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M12 22s7-3.5 7-9V5l-7-2.6L5 5v8c0 5.5 7 9 7 9z"/><path d="M12.5 7l-3 5h2.2l-.7 4 3.3-5.2H11.8z" fill="currentColor" stroke="none"/></svg>'],
+ ['Imprevisible','Imprevisible','<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h4l10 8h4M17 12h4M18 5l3 3-3 3M18 13l3 3-3 3M3 16h4l3-2.4"/></svg>'],
+ ['Joc aeri','Joc aeri','<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="7.5" r="3"/><path d="M6.5 21v-1.5a5.5 5.5 0 0 1 11 0V21"/><path d="M12 2.5l1.6 1.6M12 2.5L10.4 4.1"/></svg>'],
+ ['Resilient','Resilient','<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l2.5 6 4-13 2.5 7H21"/></svg>'],
+ ['Joc en equip','Joc en equip','<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="6" cy="6" r="2.2"/><circle cx="18" cy="6" r="2.2"/><circle cx="12" cy="18" r="2.2"/><path d="M8 6.6h8M7.4 8l3.5 8M16.6 8l-3.5 8"/></svg>']
+];
+function pickEsp(inputId,btn){document.getElementById(inputId).value=btn.dataset.v;btn.parentElement.querySelectorAll('.esp-opt').forEach(b=>b.classList.remove('on'));btn.classList.add('on');}
 function openSheet(title,fields,obj,onSave){
   var _sv=document.querySelector('.sheet-actions .save'); if(_sv){_sv.style.display='';_sv.textContent='Desa';}
   document.getElementById('sheet-title').textContent=title;
@@ -746,6 +765,7 @@ function openSheet(title,fields,obj,onSave){
     if(f.type==='paste')return `<div class="mf"><label>${f.lab}</label><textarea id="f_${f.k}" placeholder="Copia el jugador a Hattrick i enganxa'l aquí…"></textarea><button type="button" class="mini ics" style="margin-top:8px" onclick="parsePortaretalls()">⚡ Analitza i omple</button></div>`;
     if(f.type==='textarea')return `<div class="mf"><label>${f.lab}</label><textarea id="f_${f.k}">${esc(String(v))}</textarea></div>`;
     if(f.type==='select')return `<div class="mf"><label>${f.lab}</label><select id="f_${f.k}">${f.opts.map(o=>`<option value="${o[0]}" ${o[0]==v?'selected':''}>${o[1]}</option>`).join('')}</select></div>`;
+    if(f.type==='espsel')return `<div class="mf"><label>${f.lab}</label><input type="hidden" id="f_${f.k}" value="${esc(String(v))}"><div class="esp-grid">${ESP_LIST.map(e=>`<button type="button" class="esp-opt ${e[0]==v?'on':''}" data-v="${esc(e[0])}" onclick="pickEsp('f_${f.k}',this)">${e[2]}<span>${e[1]}</span></button>`).join('')}</div></div>`;
     return `<div class="mf"><label>${f.lab}</label><input id="f_${f.k}" type="${f.type||'text'}" value="${esc(String(v))}"></div>`;
   }).join('');
   sheetSave=()=>{const out={...obj};fields.forEach(f=>{
@@ -821,9 +841,9 @@ function editPlanned(id,placeCtx){
     {k:'nom',lab:'Nom (buit = Alpha, Beta…)'},
     {k:'pos',lab:'Posició',type:'select',opts:POS_OPTS},
     {k:'edat',lab:'Edat (ex. 20a)'},
-    {k:'esp',lab:'Especialitat'},
-    {k:'ext',lab:'Extrem',type:'number'},{k:'cre',lab:'Creativitat',type:'number'},{k:'def',lab:'Defensa',type:'number'},
-    {k:'pas',lab:'Passades',type:'number'},{k:'ano',lab:'Anotació',type:'number'},{k:'pa',lab:'Pilota aturada',type:'number'},{k:'por',lab:'Porteria',type:'number'}
+    {k:'esp',lab:'Especialitat',type:'espsel'},
+    {k:'ext',lab:'Extrem',type:'select',opts:skillOpts()},{k:'cre',lab:'Creativitat',type:'select',opts:skillOpts()},{k:'def',lab:'Defensa',type:'select',opts:skillOpts()},
+    {k:'pas',lab:'Passades',type:'select',opts:skillOpts()},{k:'ano',lab:'Anotació',type:'select',opts:skillOpts()},{k:'pa',lab:'Pilota aturada',type:'select',opts:skillOpts()},{k:'por',lab:'Porteria',type:'select',opts:skillOpts()}
   ],{nom:o.nom||'',pos:o.pos||'Lateral',edat:o.edat||'',esp:o.esp||'',ext:o.ext||'',cre:o.cre||'',def:o.def||'',pas:o.pas||'',ano:o.ano||'',pa:o.pa||'',por:o.por||''},async(out)=>{
     out.planned=true;out.rol='previst';
     if(!out.nom)out.nom=id?(o.nom||nextPrevistName()):nextPrevistName();
@@ -842,16 +862,16 @@ function editPlayer(id){
     {k:'edat',lab:'Edat'},
     {k:'aniversari',lab:'Proper aniversari'},
     {k:'tsi',lab:'TSI',type:'number'},
-    {k:'esp',lab:'Especialitat'},
-    {k:'ext',lab:'Extrem',type:'number'},
-    {k:'cre',lab:'Creativitat',type:'number'},
-    {k:'def',lab:'Defensa',type:'number'},
-    {k:'pas',lab:'Passades',type:'number'},
-    {k:'ano',lab:'Anotació',type:'number'},
-    {k:'pa',lab:'Pilota aturada',type:'number'},
-    {k:'por',lab:'Porteria',type:'number'},
-    {k:'forma',lab:'Forma',type:'number'},
-    {k:'resist',lab:'Resistència',type:'number'},
+    {k:'esp',lab:'Especialitat',type:'espsel'},
+    {k:'ext',lab:'Extrem',type:'select',opts:skillOpts()},
+    {k:'cre',lab:'Creativitat',type:'select',opts:skillOpts()},
+    {k:'def',lab:'Defensa',type:'select',opts:skillOpts()},
+    {k:'pas',lab:'Passades',type:'select',opts:skillOpts()},
+    {k:'ano',lab:'Anotació',type:'select',opts:skillOpts()},
+    {k:'pa',lab:'Pilota aturada',type:'select',opts:skillOpts()},
+    {k:'por',lab:'Porteria',type:'select',opts:skillOpts()},
+    {k:'forma',lab:'Forma',type:'select',opts:skillOpts(1,8)},
+    {k:'resist',lab:'Resistència',type:'select',opts:skillOpts(0,9)},
     {k:'sou',lab:'Sou (€/setmana)',type:'number'},
     {k:'nacionalitat',lab:'Nacionalitat'},
     {k:'htid',lab:'HT id'},
@@ -1195,8 +1215,8 @@ function splitTrainPhase(ph,depth){
 function editTrain(id){const x=id?state.timeline.find(i=>i.id===id):{kind:'train',trainType:'def',setmanes:8,date:nextTrainStartISO(),alert:0};
   openSheet(id?'Edita entrenament':'Nou entrenament',[
     {k:'trainType',lab:'Tipus',type:'select',opts:[['gk','Porteria'],['def','Defensa'],['pm','Creativitat'],['wing','Extrem'],['pass','Passades'],['sco','Anotació'],['setp','Pilota aturada']]},
-    {k:'setmanes',lab:'Setmanes',type:'number'},
-    {k:'jornada',lab:'Jornada d\'inici (opcional · calcula la data)',type:'number'},
+    {k:'setmanes',lab:'Setmanes',type:'select',opts:wkOpts()},
+    {k:'jornada',lab:'Jornada d\'inici (opcional · calcula la data)',type:'select',opts:jornOpts()},
     {k:'date',lab:'Data d\'inici',type:'date'},
     {k:'alert',lab:'Avís',type:'select',opts:ALERT_OPTS}
   ],{trainType:x.trainType,setmanes:x.setmanes,jornada:'',date:x.date,alert:String(x.alert||0)},async(o)=>{
@@ -1214,7 +1234,7 @@ function editSale(id){const x=id?state.timeline.find(i=>i.id===id):{kind:'sale',
     {k:'title',lab:'Títol (si no tries jugador)'},
     {k:'priceMin',lab:'Preu mínim (€)',type:'number'},
     {k:'priceMax',lab:'Preu màxim (€)',type:'number'},
-    {k:'jornada',lab:'Jornada (opcional · calcula la data)',type:'number'},
+    {k:'jornada',lab:'Jornada (opcional · calcula la data)',type:'select',opts:jornOpts()},
     {k:'date',lab:'Data',type:'date'},
     {k:'alert',lab:'Avís',type:'select',opts:ALERT_OPTS}
   ],{playerId:x.playerId||'',title:x.title||'',priceMin:x.priceMin,priceMax:x.priceMax,jornada:'',date:x.date,alert:String(x.alert||0)},async(o)=>{const date=o.jornada?jornToDate(o.jornada):o.date;tlSave(id,{kind:'sale',playerId:o.playerId,title:o.title,priceMin:o.priceMin,priceMax:o.priceMax,date:date,alert:+o.alert});});}
@@ -1226,7 +1246,7 @@ function editBuy(id){const x=id?state.timeline.find(i=>i.id===id):{kind:'buy',po
     {k:'entrenarem',lab:'Hi entrenarem'},
     {k:'motiu',lab:'Per a què'},
     {k:'budgetMax',lab:'Màxim a gastar (€)',type:'number'},
-    {k:'jornada',lab:'Jornada (opcional · calcula la data)',type:'number'},
+    {k:'jornada',lab:'Jornada (opcional · calcula la data)',type:'select',opts:jornOpts()},
     {k:'date',lab:'Data',type:'date'},
     {k:'alert',lab:'Avís',type:'select',opts:ALERT_OPTS}
   ],{pos:x.pos,reqsText:x.reqsText||'',entrenarem:x.entrenarem||'',motiu:x.motiu||'',budgetMax:x.budgetMax,jornada:'',date:x.date,alert:String(x.alert||0)},async(o)=>{const date=o.jornada?jornToDate(o.jornada):o.date;tlSave(id,{kind:'buy',pos:o.pos,reqsText:o.reqsText,entrenarem:o.entrenarem,motiu:o.motiu,budgetMax:o.budgetMax,date:date,alert:+o.alert});});}
@@ -1234,7 +1254,7 @@ function editBuy(id){const x=id?state.timeline.find(i=>i.id===id):{kind:'buy',po
 function editNote(id){const x=id?state.timeline.find(i=>i.id===id):{kind:'note',text:'',date:tlDefaultDate,alert:0};
   openSheet(id?'Edita nota':'Nova nota',[
     {k:'text',lab:'Text',type:'textarea'},
-    {k:'jornada',lab:'Jornada (opcional · calcula la data)',type:'number'},
+    {k:'jornada',lab:'Jornada (opcional · calcula la data)',type:'select',opts:jornOpts()},
     {k:'date',lab:'Data',type:'date'},
     {k:'alert',lab:'Avís',type:'select',opts:ALERT_OPTS}
   ],{text:x.text||'',jornada:'',date:x.date,alert:String(x.alert||0)},async(o)=>{const date=o.jornada?jornToDate(o.jornada):o.date;tlSave(id,{kind:'note',text:o.text,date:date,alert:+o.alert});});}
@@ -1248,7 +1268,7 @@ const LVLNAME=['inexistent','desastrós','horrible','pobre','dèbil','insuficien
 function baseWeeks(level){return 0.71*Math.pow(1.18,Math.max(0,level));}
 function ageMult(a){a=Math.max(17,a);return 1+0.05*(a-17)+0.02*Math.pow(Math.max(0,a-23),2);}
 function coachMult(){const c=state.coach||{};const tr=+c.trainer||5,a1=+c.a1||0,a2=+c.a2||0;const score=tr+0.4*(a1+a2);return (5+0.4*10)/Math.max(1,score);}
-function editCoach(){const c=state.coach||{trainer:5,a1:5,a2:5};openSheet('Personal · entrenador i assistents',[{k:'trainer',lab:'Entrenador (conos 1-5)',type:'number'},{k:'a1',lab:'Assistent 1 (conos 0-5)',type:'number'},{k:'a2',lab:'Assistent 2 (conos 0-5)',type:'number'}],{trainer:c.trainer,a1:c.a1,a2:c.a2},async(o)=>{state.coach={trainer:+o.trainer||5,a1:+o.a1||0,a2:+o.a2||0};await save();});}
+function editCoach(){const c=state.coach||{trainer:5,a1:5,a2:5};openSheet('Personal · entrenador i assistents',[{k:'trainer',lab:'Entrenador (cons)',type:'select',opts:coneOpts(1,5)},{k:'a1',lab:'Assistent 1 (cons)',type:'select',opts:coneOpts(0,5)},{k:'a2',lab:'Assistent 2 (cons)',type:'select',opts:coneOpts(0,5)}],{trainer:c.trainer,a1:c.a1,a2:c.a2},async(o)=>{state.coach={trainer:+o.trainer||5,a1:+o.a1||0,a2:+o.a2||0};await save();});}
 function parseAge(e){const m=(''+ (e||'')).match(/\d+/);return m?+m[0]:20;}
 function parseAgeYD(e){e=''+(e||'');const my=e.match(/(\d+)\s*(?:a|any)/i);const md=e.match(/(\d+)\s*(?:d|die)/i);return {Y:my?+my[1]:20,D:md?+md[1]:0};}
 function ageAtISO(edat,iso){const{Y,D}=parseAgeYD(edat);const today=new Date();today.setHours(12,0,0,0);const days=Math.max(0,Math.round((new Date(iso+'T12:00:00')-today)/864e5));const t=Y*112+D+days;return Math.floor(t/112)+'a '+(t%112)+'d';}
