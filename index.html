@@ -377,7 +377,7 @@
 <body>
 <header class="top">
   <div class="top-row">
-    <div><div class="brand">Hattrick · Projecte llarg termini <span class="brand-v">v11-09</span></div></div>
+    <div><div class="brand">Hattrick · Projecte llarg termini <span class="brand-v">v11-10</span></div></div>
     <div class="top-btns"><button class="sync-btn" onclick="hardRefresh()" title="Actualitza l'app"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg></button><button class="sync-btn" id="sync-btn" onclick="openSync()" title="Sincronització"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19a4.5 4.5 0 0 0 .5-9 6 6 0 0 0-11.6-1.6A4 4 0 0 0 6 19h11.5z"/></svg></button></div>
   </div>
   <div class="sync-status" id="sync-status"></div>
@@ -420,7 +420,7 @@
     <div><div class="pit-title" id="pit-title">Alineació</div><div class="pit-sub" id="pit-sub"></div></div>
     <button class="pit-close" onclick="closePitch()">✕</button>
   </div>
-  <div class="pit-controls"><div class="seg" id="pit-match"></div><button class="compete-btn" id="pit-swap" onclick="toggleSwap()"></button><button class="compete-btn" id="pit-compete" onclick="toggleCompete()"></button></div>
+  <div class="pit-controls"><div class="seg" id="pit-match"></div><button class="compete-btn" id="pit-swap" onclick="toggleSwap()"></button><button class="compete-btn" id="pit-compete" onclick="toggleCompete()"></button><button class="compete-btn" id="pit-copy" onclick="openCopyLineup()">⧉ Copia</button></div>
   <div class="pit-forms" id="pit-forms"></div>
   <div class="pitch-mini" id="pitch-mini"></div>
   <div class="pit-legend">🟢 100% · 🔵 50% · 🔴/⚪ no entrena · ⚫ a fitxar</div>
@@ -1129,6 +1129,52 @@ function openSlot(sid,role){
   document.getElementById('sheet-body').innerHTML=body;
   sheetSave=null;var sv=document.querySelector('.sheet-actions .save');if(sv)sv.style.display='none';
   document.getElementById('ov').classList.add('on');
+}
+let copySel=new Set();
+function copyTargets(){
+  const cur=pitCurrent;const seasons=ordSeasons();const out=[];
+  (state.timeline||[]).filter(x=>x.kind==='train').forEach(x=>{
+    if(pitKind==='phase'&&x.id===cur)return;
+    const si=itemSeaIdx(x,seasons);const sea=seasons[si];
+    const t=(sea?('T'+sea.temporada+' · '):'')+(TRAIN_LABEL[x.trainType]||'Entrenament')+' · '+(x.setmanes||'?')+' setm';
+    out.push({id:x.id,kind:'phase',label:t,date:x.date||''});
+  });
+  seasons.forEach(sea=>{ if(pitKind==='season'&&sea.id===cur)return; out.push({id:sea.id,kind:'season',label:'T'+sea.temporada+(sea.divisio?' · '+sea.divisio:'')+' (temporada)',date:sea.dataJornada||''}); });
+  out.sort((a,b)=>(a.date||'').localeCompare(b.date||''));
+  return out;
+}
+function openCopyLineup(){copySel=new Set();renderCopySheet();document.getElementById('ov').classList.add('on');}
+function toggleCopyTarget(id){if(copySel.has(id))copySel.delete(id);else copySel.add(id);renderCopySheet();}
+function selAllCopy(v){const t=copyTargets();copySel=new Set(v?t.map(x=>x.id):[]);renderCopySheet();}
+function renderCopySheet(){
+  const tgts=copyTargets();
+  document.getElementById('sheet-title').textContent='Copia alineació a…';
+  const note=`<div class="psub">Copia l'onze de <b>Lliga</b> i <b>Copa</b> d'aquesta alineació als destins triats. Sobreescriu el que hi hagi al destí. El color d'entrenament de cada destí es pinta segons el seu propi tipus.</div>`;
+  const bar=tgts.length>1?`<div class="pk-quick"><button onclick="selAllCopy(true)">☑ Tots</button><button onclick="selAllCopy(false)">☐ Cap</button></div>`:'';
+  const rows=tgts.length?tgts.map(t=>{
+    const on=copySel.has(t.id);const ic=t.kind==='phase'?'⚽':'🗓️';
+    return `<button class="pk-row ${on?'cur':''}" onclick="toggleCopyTarget('${t.id}')"><span class="pk-nm">${on?'☑':'☐'} ${ic} ${esc(t.label)}</span><span class="pk-meta">${t.date?tlDate(t.date):''}</span></button>`;
+  }).join(''):'<div class="lp-empty">Encara no hi ha altres entrenaments o temporades on copiar. Crea abans les fases de destí.</div>';
+  const btn=tgts.length?`<button class="save" style="width:100%;margin-top:12px;${copySel.size?'':'opacity:.45'}" onclick="doCopyLineup()">Copia a ${copySel.size} destí${copySel.size!==1?'s':''}</button>`:'';
+  document.getElementById('sheet-body').innerHTML=note+bar+rows+btn;
+  sheetSave=null;const sv=document.querySelector('.sheet-actions .save');if(sv)sv.style.display='none';
+}
+function doCopyLineup(){
+  if(!copySel.size)return;
+  const src=curOwner();if(!src)return;const srcLus=ensureLineups(src);
+  let n=0;
+  copySel.forEach(id=>{
+    const isPhase=(state.timeline||[]).some(x=>x.id===id);
+    const tgt=isPhase?(state.timeline||[]).find(x=>x.id===id):state.seasons.find(x=>x.id===id);
+    if(!tgt||tgt===src)return;
+    if(isPhase)state.timeline=(state.timeline||[]).filter(x=>!(x.kind==='buy'&&x.srcPhase===id));
+    ensureLineups(tgt);
+    tgt.lineups.lliga=JSON.parse(JSON.stringify(srcLus.lliga));
+    tgt.lineups.copa=JSON.parse(JSON.stringify(srcLus.copa));
+    n++;
+  });
+  save();renderLinia();
+  document.getElementById('sheet-body').innerHTML=`<div style="text-align:center;padding:24px 10px"><div style="font-size:34px">✓</div><div style="font-family:'Oswald';font-weight:600;font-size:16px;margin-top:8px">Copiat a ${n} destí${n!==1?'s':''}</div><div class="note">L'onze de Lliga i Copa s'ha clonat. Recorda que qui entrena a cada destí depèn del seu tipus d'entrenament.</div><button class="save" style="width:100%;margin-top:14px" onclick="closeSheet()">Fet</button></div>`;
 }
 document.getElementById('pitchov').addEventListener('click',e=>{if(e.target.id==='pitchov')closePitch();});
 
