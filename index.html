@@ -969,13 +969,13 @@ function trainingPlan(s){const lus=ensureLineups(s);const tt=seasonTrainCode(s);
     slots.forEach(a=>{const sid=a[0],role=a[1];const d=lu.slots[sid];if(!d)return;const pct=slotPct(role,tt);
       if(d.toSign){const e={sign:true,name:d.label||role};if(pct===100)full.set('s_'+k+'_'+sid,e);else if(pct===50)half.set('s_'+k+'_'+sid,e);return;}
       const pl=state.players.find(p=>p.id===d.playerId);if(!pl)return;
-      const entry={id:pl.id,name:pl.nom,caixa:pl.rol==='caixa',home:!!pl.home};
+      const entry={id:pl.id,name:pl.nom,caixa:pl.rol==='caixa',home:!!pl.home,planned:!!pl.planned};
       if(pct===100)full.set(pl.id,entry);else if(pct===50)half.set(pl.id,entry);});});
   half.forEach((v,k)=>{if(full.has(k))half.delete(k);});
   return {full:[...full.values()],half:[...half.values()],sign};}
 function trainPlanHTML(s,seasonId){const tp=trainingPlan(s);
   if(!tp.full.length&&!tp.half.length)return '';
-  const pchip=(base,e)=>e.sign?`<span class="tpc k">${esc(e.name)} ⚑</span>`:`<span class="tpc ${base} tpc-click" onclick="openProjection('${e.id}','${seasonId||''}')">${e.home?'<span class="heart sm">♥</span>':''}${e.caixa?'<span class="coin sm">$</span>':''}${esc(e.name)} <span class="tpc-go">📈</span></span>`;
+  const pchip=(base,e)=>e.sign?`<span class="tpc k">${esc(e.name)} ⚑</span>`:(e.planned?`<span class="tpc k tpc-click" onclick="openProjection('${e.id}','${seasonId||''}')">${esc(e.name)} <span class="tpc-go">📈</span></span>`:`<span class="tpc ${base} tpc-click" onclick="openProjection('${e.id}','${seasonId||''}')">${e.home?'<span class="heart sm">♥</span>':''}${e.caixa?'<span class="coin sm">$</span>':''}${esc(e.name)} <span class="tpc-go">📈</span></span>`);
   const col=(title,base,cls,arr)=>`<div class="tp-col ${cls}"><div class="tp-h">${title}</div><div class="tp-chips">${arr.length?arr.map(e=>pchip(base,e)).join(''):'<span class="tp-none">—</span>'}</div></div>`;
   const cols=(tp.full.length||tp.half.length)?`<div class="tp-cols">${col('100%','g','c100',tp.full)}${col('50%','b','c50',tp.half)}</div>`:'';
   const nReal=tp.full.filter(e=>!e.sign).length+tp.half.filter(e=>!e.sign).length;
