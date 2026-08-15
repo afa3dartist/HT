@@ -377,7 +377,7 @@
 <body>
 <header class="top">
   <div class="top-row">
-    <div><div class="brand">Hattrick · Projecte llarg termini <span class="brand-v">v11-11</span></div></div>
+    <div><div class="brand">Hattrick · Projecte llarg termini <span class="brand-v">v11-12</span></div></div>
     <div class="top-btns"><button class="sync-btn" onclick="hardRefresh()" title="Actualitza l'app"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg></button><button class="sync-btn" id="sync-btn" onclick="openSync()" title="Sincronització"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19a4.5 4.5 0 0 0 .5-9 6 6 0 0 0-11.6-1.6A4 4 0 0 0 6 19h11.5z"/></svg></button></div>
   </div>
   <div class="sync-status" id="sync-status"></div>
@@ -1056,11 +1056,13 @@ function trainingPlan(s){const lus=ensureLineups(s);const tt=seasonTrainCode(s);
       if(pct===100)full.set(pl.id,entry);else if(pct===50)half.set(pl.id,entry);});});
   half.forEach((v,k)=>{if(full.has(k))half.delete(k);});
   return {full:[...full.values()],half:[...half.values()],sign};}
+function trainHas50(code){const t=TRAIN[code];if(!t)return false;return Object.values(t).some(v=>v===50);}
 function trainPlanHTML(s,seasonId){const tp=trainingPlan(s);
   if(!tp.full.length&&!tp.half.length)return '';
   const pchip=(base,e)=>e.sign?`<span class="tpc k">${esc(e.name)} ⚑</span>`:(e.planned?`<span class="tpc k tpc-click" onclick="openProjection('${e.id}','${seasonId||''}')">${esc(e.name)} <span class="tpc-go">📈</span></span>`:`<span class="tpc ${base} tpc-click" onclick="openProjection('${e.id}','${seasonId||''}')">${e.home?'<span class="heart sm">♥</span>':''}${e.caixa?'<span class="coin sm">$</span>':''}${esc(e.name)} <span class="tpc-go">📈</span></span>`);
   const col=(title,base,cls,arr)=>`<div class="tp-col ${cls}"><div class="tp-h">${title}</div><div class="tp-chips">${arr.length?arr.map(e=>pchip(base,e)).join(''):'<span class="tp-none">—</span>'}</div></div>`;
-  const cols=(tp.full.length||tp.half.length)?`<div class="tp-cols">${col('100%','g','c100',tp.full)}${col('50%','b','c50',tp.half)}</div>`:'';
+  const has50=trainHas50(seasonTrainCode(s));
+  const cols=(!tp.full.length&&!tp.half.length)?'':(has50?`<div class="tp-cols">${col('100%','g','c100',tp.full)}${col('50%','b','c50',tp.half)}</div>`:col('100%','g','c100',tp.full));
   const nReal=tp.full.filter(e=>!e.sign).length+tp.half.filter(e=>!e.sign).length;
   return `<div class="field"><div class="lab">Entrenem (${nReal})</div>${cols}</div>`;}
 function addSignBrief(ph,sid,role,match){
